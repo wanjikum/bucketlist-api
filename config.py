@@ -2,10 +2,7 @@ import os
 
 
 class Config(object):
-    """
-    Parent configuration class. It contains the general settings that
-    all environments have by default
-    """
+    """Parent configuration class."""
     DEBUG = False
     CSRF_ENABLED = True
     SECRET = os.getenv('SECRET')
@@ -13,16 +10,14 @@ class Config(object):
 
 
 class DevelopmentConfig(Config):
-    """Configurations for Development Environment."""
+    """Configurations for Development."""
     DEBUG = True
 
 
 class TestingConfig(Config):
-    """
-    Configurations for Testing Environment, with a separate test database.
-    """
+    """Configurations for Testing, with a separate test database."""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///localhost/test_db'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/test_db'
     DEBUG = True
 
 
@@ -32,7 +27,7 @@ class StagingConfig(Config):
 
 
 class ProductionConfig(Config):
-    """Configurations for Production Environment."""
+    """Configurations for Production."""
     DEBUG = False
     TESTING = False
 
