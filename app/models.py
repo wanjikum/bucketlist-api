@@ -1,43 +1,60 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
-import datetime
-import os
-
-Base = declarative_base()
+from app import db
 
 
-class UserModel(Base):
+class UserModel(db.Model):
     """Defines the user table"""
     __tablename__ = "users"
-    user_id = Column(Integer, primary_key=True, autoincrement=True)
-    first_name = Column(String(50), nullable=False)
-    last_name = Column(String(50), nullable=False)
-    email = Column(String(50), unique=False, nullable=False)
-    password = Column(String(30), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), unique=False, nullable=False)
+    password = db.Column(db.String(30), nullable=False)
 
 
-class BucketListModel(Base):
-    """Defines the bucketlist table"""
-    __tablename__ = "bucketlist"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(40), nullable=False)
-    items = relationship("bucketlistitem", backref="bucketlist")
-    date_created = Column(DateTime, default=datetime.datetime.now)
-    date_modified = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
-    created_by = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+class BucketlistModel(db.Model):
+    """This class represents the bucketlist table."""
+
+    __tablename__ = 'bucketlist'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    items = db.relationship("bucketlistitem", backref="bucketlist",
+                            cascade='all, delete-orphan', lazy='dynamic')
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_modified = db.Column(
+        db.DateTime, default=db.func.current_timestamp(),
+        onupdate=db.func.current_timestamp())
+    created_by = db.Column(db.Integer, db.ForeignKey("users.id"),
+                           nullable=False)
+
+    def __init__(self, name):
+        """initialize with name."""
+        self.name = name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def get_all():
+        return Bucketlist.query.all()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<BucketlistModel: {}>".format(self.name)
 
 
-class BucketListItem(Base):
+class BucketListItem(db.Model):
     """Define the bucketlist items table"""
-    __tablename__ = "bucketlistitems"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(40), nullable=False)
-    date_created = Column(DateTime, default=datetime.datetime.now)
-    date_modified = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
-    status = Column(Boolean(), default=False)
-
-engine = create_engine('sqlite:///trial-bucketlist.db')
-Base.metadata.create_all(engine)
+    __tablename__ = "bucketlistitem"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(40), nullable=False)
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_modified = db.Column(
+        db.DateTime, default=db.func.current_timestamp(),
+        onupdate=db.func.current_timestamp())
+    status = db.Column(db.Boolean(), default=False)
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id'))
