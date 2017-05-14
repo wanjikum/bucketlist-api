@@ -10,15 +10,19 @@ class UserModel(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(30), nullable=False)
 
+    def __repr__(self):
+        """returning a printable version for the object"""
+        return "<UserModel: {}>".format(self.email)
+
 
 class BucketlistModel(db.Model):
     """This class represents the bucketlist table."""
 
-    __tablename__ = 'bucketlist'
+    __tablename__ = 'bucketlists'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
-    items = db.relationship("bucketlistitem", backref="bucketlist",
+    items = db.relationship("bucketlistitem", backref="bucketlists",
                             cascade='all, delete-orphan', lazy='dynamic')
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
@@ -49,7 +53,7 @@ class BucketlistModel(db.Model):
 
 class BucketListItem(db.Model):
     """Define the bucketlist items table"""
-    __tablename__ = "bucketlistitem"
+    __tablename__ = "bucketlistitems"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(40), nullable=False)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -57,4 +61,4 @@ class BucketListItem(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
     done = db.Column(db.Boolean(), default=False)
-    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id'))
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'))
