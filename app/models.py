@@ -56,5 +56,5 @@ class BucketListItem(db.Model):
     date_modified = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
-    status = db.Column(db.Boolean(), default=False)
+    done = db.Column(db.Boolean(), default=False)
     bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlist.id'))
