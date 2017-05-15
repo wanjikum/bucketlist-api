@@ -1,4 +1,7 @@
 import unittest
+from flask import json
+from instance.config import app_config
+from app.models import UserModel, BucketlistModel, BucketListItem
 from app import create_app, db
 
 
@@ -7,7 +10,32 @@ class BucketlistTestCase(unittest.TestCase):
 
     def setUp(self):
         """Define test variables and initialize app."""
-        pass
+        self.app = app_config('testing')
+
+        # Get the current context we are in, either setup, active or in between
+        # Captures things in that context
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+        self.client = self.app.test_client()
+
+        # add a bucketlist
+        self.new_bucketlist = {
+            'id': 1,
+            'name': 'Adventures',
+            'date_created': '2017-05-15 06:57:23',
+            'date_modified': '2017-05-16 05:10:23',
+            'created_by': '1'
+        }
+
+        # add a bucket item
+        self.new_item = {
+            'item_id': 1,
+            'item_name': 'Go to rome',
+            'date_created': '2017-05-15 07:00:23',
+            'date_modified': '2017-05-16 08:00:00',
+            'done': 'False'
+        }
 
     def test_create_bucketlist(self):
         """Test API can create a bucketlist using POST request"""
