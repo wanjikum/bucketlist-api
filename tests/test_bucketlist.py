@@ -10,7 +10,7 @@ class BucketlistTestCase(unittest.TestCase):
 
     def setUp(self):
         """Define test variables and initialize app."""
-        self.app = app_config('testing')
+        self.app = create_app('testing')
 
         # Get the current context we are in, either setup, active or in between
         # Captures things in that context
@@ -29,7 +29,7 @@ class BucketlistTestCase(unittest.TestCase):
         }
 
         # add a bucket item
-        self.new_item = {
+        self.new_bucketlist_item = {
             'item_id': 1,
             'item_name': 'Go to rome',
             'date_created': '2017-05-15 07:00:23',
@@ -39,27 +39,45 @@ class BucketlistTestCase(unittest.TestCase):
 
     def test_create_bucketlist(self):
         """Test API can create a bucketlist using POST request"""
-        pass
+        response = self.client.post('/bucketlists/',
+                                    data=json.dumps(self.new_bucketlist))
+
+        self.assertEqual(response.status_code, 201)
 
     def test_reject_create_bucketlist_duplicate(self):
         """Test API rejects bucketlist duplication"""
-        pass
+        response = self.client.post('/bucketlists/',
+                                    data=json.dumps(self.new_bucketlist))
+
+        self.assertEqual(response.status_code, 409)
 
     def test_reject_create_bucketlist_if_unauthorized(self):
         """Test API rejects creating a bucketlist if unauthorized"""
-        pass
+        response = self.client.post('/bucketlists/',
+                                    data=json.dumps(self.new_bucketlist))
+
+        self.assertEqual(response.status_code, 403)
 
     def test_create_bucketlist_item(self):
         """Test API can create a bucketlist using POST request"""
-        pass
+        response = self.client.post('/bucketlists/<id>/items/',
+                                    data=json.dumps(self.new_bucketlist_item))
+
+        self.assertEqual(response.status_code, 201)
 
     def test_reject_create_bucketlistitem_duplicate(self):
         """Test API rejects bucketlist item duplication"""
-        pass
+        response = self.client.post('/bucketlists/<id>/items/',
+                                    data=json.dumps(self.new_bucketlist_item))
+
+        self.assertEqual(response.status_code, 409)
 
     def test_reject_create_bucketlist_item_if_unauthorized(self):
         """Test API rejects creating a bucketlist item if unauthorized"""
-        pass
+        response = self.client.post('/bucketlists/<id>/items/',
+                                    data=json.dumps(self.new_bucketlist_item))
+
+        self.assertEqual(response.status_code, 403)
 
     def test_get_all_bucketlists(self):
         """Test API can get all bucketlists using GET request"""
