@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from instance.config import app_config
 
 
-# initialize sql-alchemy
+# Control the SQLAlchemy integration for our Flask application
+# provide access to all the SQLAlchemy functions and classes
 db = SQLAlchemy()
 
 
