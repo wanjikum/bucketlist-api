@@ -13,12 +13,20 @@ class BucketlistTestCase(unittest.TestCase):
         """Test API can create a bucketlist using POST request"""
         pass
 
+    def test_reject_create_bucketlist_duplicate(self):
+        """Test API rejects bucketlist duplication"""
+        pass
+
     def test_reject_create_bucketlist_if_unauthorized(self):
         """Test API rejects creating a bucketlist if unauthorized"""
         pass
 
     def test_create_bucketlist_item(self):
         """Test API can create a bucketlist using POST request"""
+        pass
+
+    def test_reject_create_bucketlistitem_duplicate(self):
+        """Test API rejects bucketlist item duplication"""
         pass
 
     def test_reject_create_bucketlist_item_if_unauthorized(self):
@@ -41,12 +49,12 @@ class BucketlistTestCase(unittest.TestCase):
         """Test API rejects getting all bucketlist by id if unauthorized"""
         pass
 
-    def test_api_lists_a_bucketlist_with_all_bucketlist_items(self):
-        """Test API can list a bucketlist with all bucketlist items"""
+    def test_api_gets_a_bucketlist_item_by_id(self):
+        """Test API can get a bucketlist item by id"""
         pass
 
-    def test_api_rejects_listing_bucketlist_contents_if_unauthorized(self):
-        """Test API rejects listing bucketlist content if unauthorized"""
+    def test_api_rejects_getting_a_bucketlist_item_by_id_if_unauthorized(self):
+        """Test API rejects getting bucketlist item if unauthorized"""
         pass
 
     def test_edit_bucketlist(self):
@@ -71,7 +79,7 @@ class BucketlistTestCase(unittest.TestCase):
         """Test API can delete an existing bucketlist"""
         pass
 
-    def test_reject_deleting_bucketlist(self):
+    def test_reject_deleting_bucketlist_if_unauthorized(self):
         """
         Test API rejects deleting an existing bucketlist if anauthorized
         """
@@ -81,7 +89,7 @@ class BucketlistTestCase(unittest.TestCase):
         """Test API can delete an existing bucketlist item"""
         pass
 
-    def test_reject_deleting_a_bucketlist_item(self):
+    def test_reject_deleting_a_bucketlist_item_if_unauthorized(self):
         """
         Test API rejects deleting an existing bucketlist item if anauthorized
         """
