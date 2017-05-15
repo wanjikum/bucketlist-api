@@ -12,7 +12,7 @@ class UserModel(db.Model):
 
     def __repr__(self):
         """returning a printable version for the object"""
-        return "<UserModel: {}>".format(self.email)
+        return "<UserModel: {} {}>".format(self.first_name, self.last_name)
 
 
 class BucketlistModel(db.Model):
@@ -52,7 +52,7 @@ class BucketlistModel(db.Model):
 
 
 class BucketListItem(db.Model):
-    """Define the bucketlist items table"""
+    """Define the bucketlist  items table"""
     __tablename__ = "bucketlistitems"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(40), nullable=False)

@@ -12,8 +12,6 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 
 manager.add_command('db', MigrateCommand)
-# db.create_all()
-# db.session.commit()
 
 
 @manager.command
@@ -26,10 +24,7 @@ def create_db():
 @manager.command
 def drop_db():
     """Deletes database"""
-    try:
-        os.remove("app/bucketlist.db")
-    except FileNotFoundError:
-        pass
+    db.drop_all()
 
 
 if __name__ == '__main__':
