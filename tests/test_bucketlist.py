@@ -38,61 +38,130 @@ class BucketlistTestCase(unittest.TestCase):
         }
 
     def test_create_bucketlist(self):
-        """Test API can create a bucketlist using POST request"""
+        """
+        Test API can create a bucketlist using POST request successfully.
+        It should return status code 201 which means bucketlist Created
+        successfully.
+        """
         response = self.client.post('/bucketlists/',
                                     data=json.dumps(self.new_bucketlist))
 
         self.assertEqual(response.status_code, 201)
 
     def test_reject_create_bucketlist_duplicate(self):
-        """Test API rejects bucketlist duplication"""
+        """
+        Test API rejects bucketlist duplication.
+        It should return status code 409 which means Conflict.
+        """
         response = self.client.post('/bucketlists/',
                                     data=json.dumps(self.new_bucketlist))
 
         self.assertEqual(response.status_code, 409)
 
     def test_reject_create_bucketlist_if_unauthorized(self):
-        """Test API rejects creating a bucketlist if unauthorized"""
+        """
+        Test API rejects creating a bucketlist if unauthorized.
+        It should return status code 401 which means unauthorized.
+        """
+        # use an unauthorized user
+        # self.client().post('user/logout')
         response = self.client.post('/bucketlists/',
                                     data=json.dumps(self.new_bucketlist))
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_create_bucketlist_item(self):
-        """Test API can create a bucketlist using POST request"""
-        response = self.client.post('/bucketlists/<id>/items/',
+        """
+        Test API can create a bucketlist item using POST request.
+        It should return status code 201 which means bucketlist item
+        Created successfully.
+        """
+        response = self.client.post('/bucketlists/1/items/',
                                     data=json.dumps(self.new_bucketlist_item))
 
         self.assertEqual(response.status_code, 201)
 
-    def test_reject_create_bucketlistitem_duplicate(self):
-        """Test API rejects bucketlist item duplication"""
-        response = self.client.post('/bucketlists/<id>/items/',
+    def test_reject_create_bucketlist_item_duplicate(self):
+        """
+        Test API rejects bucketlist item duplication.
+        It should return status code 409 which means Conflict.
+        """
+        response = self.client.post('/bucketlists/1/items/',
                                     data=json.dumps(self.new_bucketlist_item))
 
         self.assertEqual(response.status_code, 409)
 
     def test_reject_create_bucketlist_item_if_unauthorized(self):
-        """Test API rejects creating a bucketlist item if unauthorized"""
-        response = self.client.post('/bucketlists/<id>/items/',
+        """
+        Test API rejects creating a bucketlist item if unauthorized.
+        It should return status code 401 which means unauthorized.
+        """
+        # use an unauthorized user
+        # self.client().post('user/logout')
+        response = self.client.post('/bucketlists/1/items/',
                                     data=json.dumps(self.new_bucketlist_item))
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_bucketlist_item_using_non_existing_bucketlist(self):
+        """
+        Test API rejects creating a bucketlist item if unauthorized.
+        It should return status code 201 which means bucketlist item
+        Created successfully.
+        """
+        response = self.client.post('/bucketlists/19/items/',
+                                    data=json.dumps(self.new_bucketlist_item))
+
+        self.assertEqual(response.status_code, 201)
 
     def test_get_all_bucketlists(self):
-        """Test API can get all bucketlists using GET request"""
-        pass
+        """
+        Test API can get all bucketlists using GET request.
+        It should return status code 200 which means OK.
+        """
+        response = self.client.get('/bucketlists/')
+
+        self.assertEqual(response.status_code, 200)
 
     def test_api_rejects_get_all_bucketlists_if_unathorized(self):
-        """Test API rejects getting all bucketlists if unauthorized"""
+        """
+        Test API rejects getting all bucketlists if unauthorized
+        It should return status code 401 which means unauthorized.
+        """
+        # use an unauthorized user
+        # self.client().post('user/logout')
+        response = self.client.get('/bucketlists/')
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_all_bucketlists_if_no_content(self):
+        """
+        Test API can get all bucketlists using GET request if none.
+        """
         pass
 
     def test_api_can_get_bucketlist_by_id(self):
         """Test API can get a single bucketlist using it's id"""
-        pass
+
+        response = self.client.get('/bucketlists/1/')
+
+        self.assertEqual(response.status_code, 201)
 
     def test_api_rejects_getting_bucketlist_by_id_if_unathorized(self):
-        """Test API rejects getting all bucketlist by id if unauthorized"""
+        """
+        Test API rejects getting a bucketlist by id if unauthorized
+        It should return status code 401 which means unauthorized.
+        """
+        # use an unauthorized user
+        # self.client().post('user/logout')
+        response = self.client.get('/bucketlists/1/')
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_api_rejects_getting_bucketlist_if_it_does_not_exist(self):
+        """
+        Test API rejects getting all bucketlist by id if it does not exist
+        """
         pass
 
     def test_api_gets_a_bucketlist_item_by_id(self):
@@ -100,47 +169,95 @@ class BucketlistTestCase(unittest.TestCase):
         pass
 
     def test_api_rejects_getting_a_bucketlist_item_by_id_if_unauthorized(self):
-        """Test API rejects getting bucketlist item if unauthorized"""
+        """Test API rejects getting a bucketlist item if unauthorized"""
+        # use an unauthorized user
+        # self.client().post('user/logout')
         pass
 
-    def test_edit_bucketlist(self):
-        """Test API can edit an existing bucketlist using PUT request"""
+    def test_api_rejects_getting_bucketlist_item_if_it_does_not_exist(self):
+        """
+        Test API rejects getting a bucketlist item by id if it does not exist
+        """
+        pass
+
+    def test_edit_bucketlist_successfully(self):
+        """
+        Test API can edit an existing bucketlist using PUT request successfully
+        """
         pass
 
     def test_reject_edit_bucketlist_if_unauthorized(self):
-        """Test API rejects editing an existing bucketlist if anauthorized"""
+        """
+        Test API rejects editing an existing bucketlist if unauthorized
+        """
+        # use an unauthorized user
+        # self.client().post('user/logout')
         pass
 
-    def test_edit_bucketlist_item(self):
+    def test_reject_edit_bucketlist_if_it_does_not_exist(self):
+        """
+        Test API rejects editing an existing bucketlist if it does not exist
+        """
+        pass
+
+    def test_edit_bucketlist_item_successfully(self):
         """Test API can edit an existing bucketlist item using PUT request"""
         pass
 
     def test_reject_editing_bucketlist_item_if_unauthorized(self):
         """
-        Test API rejects editing an existing bucketlist item if anauthorized
+        Test API rejects editing an existing bucketlist item if unauthorized
+        """
+        # use an unauthorized user
+        # self.client().post('user/logout')
+        pass
+
+    def test_reject_editing_bucketlist_item_if_it_does_not_exist(self):
+        """
+        Test API rejects editing an existing bucketlist item if it does not
+        exist
         """
         pass
 
-    def test_delete_bucketlist(self):
-        """Test API can delete an existing bucketlist"""
+    def test_delete_bucketlist_successfully(self):
+        """Test API can delete an existing bucketlist successfully"""
         pass
 
     def test_reject_deleting_bucketlist_if_unauthorized(self):
         """
-        Test API rejects deleting an existing bucketlist if anauthorized
+        Test API rejects deleting an existing bucketlist if unauthorized
+        """
+        # use an unauthorized user
+        # self.client().post('user/logout')
+        pass
+
+    def test_reject_deleting_bucketlist_if_it_does_not_exist(self):
+        """
+        Test API rejects deleting a bucketlist if it does not exist
         """
         pass
 
-    def test_delete_bucketlist_item(self):
-        """Test API can delete an existing bucketlist item"""
+    def test_delete_bucketlist_item_successfully(self):
+        """Test API can delete an existing bucketlist item successfully"""
         pass
 
     def test_reject_deleting_a_bucketlist_item_if_unauthorized(self):
         """
-        Test API rejects deleting an existing bucketlist item if anauthorized
+        Test API rejects deleting an existing bucketlist item if unauthorized
+        """
+        # use an unauthorized user
+        # self.client().post('user/logout')
+        pass
+
+    def test_reject_deleting_a_bucketlist_item_if_it_does_not_exist(self):
+        """
+        Test API rejects deleting a bucketlist item that does not exist
         """
         pass
 
     def tearDown(self):
         """teardown all initialized variables."""
         pass
+
+
+# use reqparse or marshmallow to validate data, 400
