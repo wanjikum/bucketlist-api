@@ -22,19 +22,26 @@ class BucketlistTestCase(unittest.TestCase):
         # add a bucketlist
         self.new_bucketlist = {
             'id': 1,
-            'name': 'Adventures',
-            'date_created': '2017-05-15 06:57:23',
-            'date_modified': '2017-05-16 05:10:23',
-            'created_by': '1'
+            'name': 'Adventures'
         }
 
         # add a bucket item
         self.new_bucketlist_item = {
             'item_id': 1,
-            'item_name': 'Go to rome',
-            'date_created': '2017-05-15 07:00:23',
-            'date_modified': '2017-05-16 08:00:00',
-            'done': 'False'
+            'item_name': 'Go to rome'
+        }
+
+        # add a bucketlist update
+        self.new_bucketlist_update = {
+            'id': 1,
+            'name': 'Explore the world'
+        }
+
+        # add a bucket item update
+        self.new_bucketlist_item_update = {
+            'item_id': 1,
+            'item_name': 'Go to Miami'
+            'done': 'True'
         }
 
     def test_create_bucketlist(self):
@@ -139,7 +146,7 @@ class BucketlistTestCase(unittest.TestCase):
         It should return status code 200 which means ok.
         """
 
-        response = self.client.get('/bucketlists/1/')
+        response = self.client.get('/bucketlists/1')
 
         self.assertEqual(response.status_code, 200)
 
@@ -150,7 +157,7 @@ class BucketlistTestCase(unittest.TestCase):
         """
         # use an unauthorized user
         # self.client().post('user/logout')
-        response = self.client.get('/bucketlists/1/')
+        response = self.client.get('/bucketlists/1')
 
         self.assertEqual(response.status_code, 401)
 
@@ -159,7 +166,7 @@ class BucketlistTestCase(unittest.TestCase):
         Test API rejects getting all bucketlist by id if it does not exist
         It should return status code 404 which means page not found.
         """
-        response = self.client.get('/bucketlists/1/')
+        response = self.client.get('/bucketlists/1')
 
         self.assertEqual(response.status_code, 404)
 
@@ -201,7 +208,8 @@ class BucketlistTestCase(unittest.TestCase):
         It should return status code 200 which means ok.
         """
 
-        response = self.client.get('/bucketlists/1/')
+        response = self.client.put('/bucketlists/1',
+                                   data=json.dumps(self.new_bucketlist_update))
 
         self.assertEqual(response.status_code, 200)
 
@@ -212,7 +220,8 @@ class BucketlistTestCase(unittest.TestCase):
         """
         # use an unauthorized user
         # self.client().post('user/logout')
-        response = self.client.get('/bucketlists/1/')
+        response = self.client.put('/bucketlists/1',
+                                   data=json.dumps(self.new_bucketlist_update))
 
         self.assertEqual(response.status_code, 401)
 
@@ -221,28 +230,42 @@ class BucketlistTestCase(unittest.TestCase):
         Test API rejects editing an existing bucketlist if it does not exist
         It should return status code 404 which means page not found.
         """
-        response = self.client.get('/bucketlists/1/')
+        response = self.client.put('/bucketlists/1',
+                                   data=json.dumps(self.new_bucketlist_update))
 
         self.assertEqual(response.status_code, 404)
 
     def test_edit_bucketlist_item_successfully(self):
-        """Test API can edit an existing bucketlist item using PUT request"""
-        pass
+        """
+        Test API can edit an existing bucketlist item using PUT request
+        It should return status code 200 which means ok.
+        """
+        response = self.client.put('/bucketlists/1/items/1',
+                                   data=json.dumps(
+                                    self.new_bucketlist_item_update))
+        self.assertEqual(response.status_code, 200)
 
     def test_reject_editing_bucketlist_item_if_unauthorized(self):
         """
         Test API rejects editing an existing bucketlist item if unauthorized
+        It should return status code 401 which means unauthorized.
         """
         # use an unauthorized user
         # self.client().post('user/logout')
-        pass
+        response = self.client.put('/bucketlists/1/items/1',
+                                   data=json.dumps(
+                                    self.new_bucketlist_item_update))
+        self.assertEqual(response.status_code, 401)
 
     def test_reject_editing_bucketlist_item_if_it_does_not_exist(self):
         """
         Test API rejects editing an existing bucketlist item if it does not
-        exist
+        exist. It should return status code 404 which means page not found.
         """
-        pass
+        response = self.client.put('/bucketlists/1/items/1',
+                                   data=json.dumps(
+                                    self.new_bucketlist_item_update))
+        self.assertEqual(response.status_code, 404)
 
     def test_delete_bucketlist_successfully(self):
         """Test API can delete an existing bucketlist successfully"""
