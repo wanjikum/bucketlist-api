@@ -40,7 +40,7 @@ class BucketlistTestCase(unittest.TestCase):
         # add a bucket item update
         self.new_bucketlist_item_update = {
             'item_id': 1,
-            'item_name': 'Go to Miami'
+            'item_name': 'Go to Miami',
             'done': 'True'
         }
 
@@ -267,46 +267,64 @@ class BucketlistTestCase(unittest.TestCase):
                                     self.new_bucketlist_item_update))
         self.assertEqual(response.status_code, 404)
 
-    def test_delete_bucketlist_successfully(self):
-        """Test API can delete an existing bucketlist successfully"""
-        pass
-
-    def test_reject_deleting_bucketlist_if_unauthorized(self):
-        """
-        Test API rejects deleting an existing bucketlist if unauthorized
-        """
-        # use an unauthorized user
-        # self.client().post('user/logout')
-        pass
-
-    def test_reject_deleting_bucketlist_if_it_does_not_exist(self):
-        """
-        Test API rejects deleting a bucketlist if it does not exist
-        """
-        pass
-
     def test_delete_bucketlist_item_successfully(self):
-        """Test API can delete an existing bucketlist item successfully"""
-        pass
+        """
+        Test API can delete an existing bucketlist item successfully
+        It should return status code 200 which means ok.
+        """
+        response = self.client.delete('/bucketlists/1/items/1')
+        self.assertEqual(response.status_code, 200)
 
     def test_reject_deleting_a_bucketlist_item_if_unauthorized(self):
         """
         Test API rejects deleting an existing bucketlist item if unauthorized
+        It should return status code 401 which means unauthorized.
         """
         # use an unauthorized user
         # self.client().post('user/logout')
-        pass
+        response = self.client.delete('/bucketlists/1/items/1')
+        self.assertEqual(response.status_code, 401)
 
     def test_reject_deleting_a_bucketlist_item_if_it_does_not_exist(self):
         """
         Test API rejects deleting a bucketlist item that does not exist
+        It should return status code 404 which means page not found.
         """
-        pass
+        response = self.client.delete('/bucketlists/1/items/1')
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_bucketlist_successfully(self):
+        """
+        Test API can delete an existing bucketlist successfully
+        It should return status code 200 which means ok.
+        """
+        response = self.client.delete('/bucketlists/1')
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_reject_deleting_bucketlist_if_unauthorized(self):
+        """
+        Test API rejects deleting an existing bucketlist if unauthorized
+        It should return status code 401 which means unauthorized.
+        """
+        # use an unauthorized user
+        # self.client().post('user/logout')
+        response = self.client.delete('/bucketlists/1')
+        self.assertEqual(response.status_code, 401)
+
+    def test_reject_deleting_bucketlist_if_it_does_not_exist(self):
+        """
+        Test API rejects deleting a bucketlist if it does not exist
+        It should return status code 404 which means page not found.
+        """
+        response = self.client.delete('/bucketlists/1')
+        self.assertEqual(response.status_code, 404)
 
     def tearDown(self):
         """teardown all initialized variables."""
-        pass
-
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
 
 # use reqparse or marshmallow to validate data, 400
     # def test_get_all_bucketlists_if_no_content(self):
