@@ -56,13 +56,6 @@ class BaseUserTest(unittest.TestCase):
             'password': ''
         }
 
-        self.login_result = self.client.post('/auth/login/',
-                                             data=json.dumps(self.login))
-        # stringify the json data
-        # login_data = json.loads(self.login_result.get_data(as_text=True))
-        # token = login_data['access_token']
-        # self.headers = {'token': token}
-
     def tearDown(self):
         db.session.remove()
         db.drop_all()
