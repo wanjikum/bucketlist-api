@@ -12,6 +12,7 @@ class BaseUserTest(unittest.TestCase):
         self.app_context.push()
         db.create_all()
 
+        # Create a test client our application
         self.client = self.app.test_client()
 
         # User registration

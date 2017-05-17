@@ -15,6 +15,7 @@ class BucketlistTestCase(unittest.TestCase):
         # Get the current context we are in, either setup, active or in between
         # Captures things in that context
         self.app_context = self.app.app_context()
+
         # solves application not registered on db instance and no
         # applicationbound to current context
         self.app_context.push()
@@ -167,7 +168,7 @@ class BucketlistTestCase(unittest.TestCase):
         Test API rejects getting all bucketlist by id if it does not exist
         It should return status code 404 which means page not found.
         """
-        response = self.client.get('/bucketlists/1')
+        response = self.client.get('/bucketlists/19')
 
         self.assertEqual(response.status_code, 404)
 
@@ -199,7 +200,7 @@ class BucketlistTestCase(unittest.TestCase):
         """
         # use an unauthorized user
         # self.client().post('user/logout')
-        response = self.client.get('/bucketlists/1/items/1')
+        response = self.client.get('/bucketlists/1/items/19')
 
         self.assertEqual(response.status_code, 404)
 
@@ -231,7 +232,7 @@ class BucketlistTestCase(unittest.TestCase):
         Test API rejects editing an existing bucketlist if it does not exist
         It should return status code 404 which means page not found.
         """
-        response = self.client.put('/bucketlists/1',
+        response = self.client.put('/bucketlists/19',
                                    data=json.dumps(self.new_bucketlist_update))
 
         self.assertEqual(response.status_code, 404)
@@ -263,7 +264,7 @@ class BucketlistTestCase(unittest.TestCase):
         Test API rejects editing an existing bucketlist item if it does not
         exist. It should return status code 404 which means page not found.
         """
-        response = self.client.put('/bucketlists/1/items/1',
+        response = self.client.put('/bucketlists/1/items/19',
                                    data=json.dumps(
                                     self.new_bucketlist_item_update))
         self.assertEqual(response.status_code, 404)
@@ -291,7 +292,7 @@ class BucketlistTestCase(unittest.TestCase):
         Test API rejects deleting a bucketlist item that does not exist
         It should return status code 404 which means page not found.
         """
-        response = self.client.delete('/bucketlists/1/items/1')
+        response = self.client.delete('/bucketlists/1/items/19')
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bucketlist_successfully(self):
@@ -318,7 +319,7 @@ class BucketlistTestCase(unittest.TestCase):
         Test API rejects deleting a bucketlist if it does not exist
         It should return status code 404 which means page not found.
         """
-        response = self.client.delete('/bucketlists/1')
+        response = self.client.delete('/bucketlists/19')
         self.assertEqual(response.status_code, 404)
 
     def tearDown(self):
