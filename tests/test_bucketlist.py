@@ -15,6 +15,8 @@ class BucketlistTestCase(unittest.TestCase):
         # Get the current context we are in, either setup, active or in between
         # Captures things in that context
         self.app_context = self.app.app_context()
+        # solves application not registered on db instance and no
+        # applicationbound to current context
         self.app_context.push()
         db.create_all()
         self.client = self.app.test_client()
@@ -56,6 +58,7 @@ class BucketlistTestCase(unittest.TestCase):
         Test API rejects bucketlist duplication.
         It should return status code 409 which means Conflict.
         """
+        self.client.post('/bucketlists/', data=json.dumps(self.new_bucketlist))
         response = self.client.post('/bucketlists/',
                                     data=json.dumps(self.new_bucketlist))
 
@@ -89,6 +92,8 @@ class BucketlistTestCase(unittest.TestCase):
         Test API rejects bucketlist item duplication.
         It should return status code 409 which means Conflict.
         """
+        self.client.post('/bucketlists/1/items/',
+                         data=json.dumps(self.new_bucketlist_item))
         response = self.client.post('/bucketlists/1/items/',
                                     data=json.dumps(self.new_bucketlist_item))
 
