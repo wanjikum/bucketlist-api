@@ -21,25 +21,21 @@ class BucketlistTestCase(unittest.TestCase):
 
         # add a bucketlist
         self.new_bucketlist = {
-            'id': 1,
             'name': 'Adventures'
         }
 
         # add a bucket item
         self.new_bucketlist_item = {
-            'item_id': 1,
             'item_name': 'Go to rome'
         }
 
         # add a bucketlist update
         self.new_bucketlist_update = {
-            'id': 1,
             'name': 'Explore the world'
         }
 
         # add a bucket item update
         self.new_bucketlist_item_update = {
-            'item_id': 1,
             'item_name': 'Go to Miami',
             'done': 'True'
         }
