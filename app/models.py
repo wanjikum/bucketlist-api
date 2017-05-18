@@ -10,9 +10,9 @@ class UserModel(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(30), nullable=False)
 
-    def __repr__(self):
-        """returning a printable version for the object"""
-        return "<UserModel: {} {}>".format(self.first_name, self.last_name)
+    # def __repr__(self):
+    #     """returning a printable version for the object"""
+    #     return "<UserModel: {} {}>".format(self.first_name, self.last_name)
 
 
 class BucketlistModel(db.Model):
@@ -31,24 +31,24 @@ class BucketlistModel(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"),
                            nullable=False)
 
-    def __init__(self, name):
-        """initialize with name."""
-        self.name = name
-
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
-
-    @staticmethod
-    def get_all():
-        return Bucketlist.query.all()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
-    def __repr__(self):
-        return "<BucketlistModel: {}>".format(self.name)
+    # def __init__(self, name):
+    #     """initialize with name."""
+    #     self.name = name
+    #
+    # def save(self):
+    #     db.session.add(self)
+    #     db.session.commit()
+    #
+    # @staticmethod
+    # def get_all():
+    #     return Bucketlist.query.all()
+    #
+    # def delete(self):
+    #     db.session.delete(self)
+    #     db.session.commit()
+    #
+    # def __repr__(self):
+    #     return "<BucketlistModel: {}>".format(self.name)
 
 
 class BucketListItem(db.Model):
