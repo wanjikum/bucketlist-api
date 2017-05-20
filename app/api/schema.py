@@ -48,6 +48,19 @@ class UserLoginSchema(Schema):
                              error_message={'required': 'Enter password'})
 
 
+class BucketListItemSchema(Schema):
+    """
+    Schema to validate, serialize, and deserialize buckelist data
+    """
+    id = fields.Integer(dump_only=True)
+    name = fields.String(required=True,
+                         error_messages={
+                             'required': 'Enter a bucketlist item name'})
+    date_created = fields.DateTime(dump_only=True)
+    date_modified = fields.DateTime(dump_only=True)
+    done = fields.Boolean()
+
+
 class BucketlistSchema(Schema):
     """
     Schema to validate, serialize, and deserialize buckelist data
@@ -56,6 +69,8 @@ class BucketlistSchema(Schema):
     name = fields.String(required=True,
                          error_messages={
                              'required': 'Enter a bucketlist name'})
+    items = fields.Nested(BucketListItemSchema, dump_only=True,
+                          many=True)
     date_created = fields.DateTime(dump_only=True)
     date_modified = fields.DateTime(dump_only=True)
     created_by = fields.Integer(attribute='users.id', dump_only=True)
