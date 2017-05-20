@@ -54,7 +54,7 @@ class UserTestCases(BaseUserTest):
         # login a user with no username
         response = self.client.post('/auth/login/',
                                     data=json.dumps(
-                                     self.login_with_no_username))
+                                        self.login_with_no_username))
         self.assertEqual(response.status_code, 400)
 
     def test_login_user_with_a_username_but_has_no_password(self):
@@ -63,7 +63,7 @@ class UserTestCases(BaseUserTest):
         # login a user with no password
         response = self.client.post('/auth/login/',
                                     data=json.dumps(
-                                     self.login_with_no_password))
+                                        self.login_with_no_password))
         self.assertEqual(response.status_code, 400)
 
     def test_login_user_with_no_credentials(self):
@@ -72,7 +72,7 @@ class UserTestCases(BaseUserTest):
         # login a user with no credentials
         response = self.client.post('/auth/login/',
                                     data=json.dumps(
-                                     self.login_no_credentials))
+                                        self.login_no_credentials))
         self.assertEqual(response.status_code, 400)
 
     def tearDown(self):

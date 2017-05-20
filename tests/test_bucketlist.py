@@ -244,7 +244,7 @@ class BucketlistTestCase(unittest.TestCase):
         """
         response = self.client.put('/bucketlists/1/items/1',
                                    data=json.dumps(
-                                    self.new_bucketlist_item_update))
+                                       self.new_bucketlist_item_update))
         self.assertEqual(response.status_code, 200)
 
     def test_reject_editing_bucketlist_item_if_unauthorized(self):
@@ -256,7 +256,7 @@ class BucketlistTestCase(unittest.TestCase):
         # self.client().post('user/logout')
         response = self.client.put('/bucketlists/1/items/1',
                                    data=json.dumps(
-                                    self.new_bucketlist_item_update))
+                                       self.new_bucketlist_item_update))
         self.assertEqual(response.status_code, 401)
 
     def test_reject_editing_bucketlist_item_if_it_does_not_exist(self):
@@ -266,7 +266,7 @@ class BucketlistTestCase(unittest.TestCase):
         """
         response = self.client.put('/bucketlists/1/items/19',
                                    data=json.dumps(
-                                    self.new_bucketlist_item_update))
+                                       self.new_bucketlist_item_update))
         self.assertEqual(response.status_code, 404)
 
     def test_delete_bucketlist_item_successfully(self):
