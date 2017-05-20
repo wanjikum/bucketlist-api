@@ -32,4 +32,18 @@ class UserRegisterSchema(Schema):
                                     required=True,
                                     error_message='Password is required!')
 
+
+class UserLoginSchema(Schema):
+    """
+    Schema to validate, serialize, and deserialize user login data
+    """
+    email = fields.String(load_only=True,
+                          validate=[validate.Length(max=12)],
+                          required=True,
+                          error_message='Email is required!')
+    password = fields.String(load_only=True,
+                             validate=[validate.Length(min=5)],
+                             required=True,
+                             error_message='Password is required!')
+
     print('heeeey, goodwork!')
