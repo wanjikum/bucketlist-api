@@ -2,7 +2,7 @@ from flask_restful import Api, Resource, fields, marshal_with, abort
 
 
 class UserRegisterApi(Resource):
-    """Contains the user login and register functionalities"""
+    """Contains the user register functionalities"""
     pass
 
 

@@ -2,16 +2,21 @@ from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from instance.config import app_config
-from api.resources import UserRegisterApi, UserLoginApi, BucketlistApi,
-    BucketlistsApi, BucketlistItemApi, BucketlistItemsApi
+from app.api.resources import (UserRegisterApi,
+                               UserLoginApi,
+                               BucketlistApi,
+                               BucketlistsApi,
+                               BucketlistItemApi,
+                               BucketlistItemsApi)
 
 
 # Control the SQLAlchemy integration for our Flask application
 # provide access to all the SQLAlchemy functions and classes
 db = SQLAlchemy()
 
-
 # wraps the creation of a new Flask object
+
+
 def create_app(config_name):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
@@ -28,11 +33,11 @@ def create_app(config_name):
                      endpoint='user_login')
     api.add_resource(BucketlistsApi, '/api/v1 /bucketlists/',
                      endpoint='bucketlists')
-    api.add_resource(BucketlistApi, '/api/v1/bucketlists/<int: id>',
+    api.add_resource(BucketlistApi, '/api/v1/bucketlists/<id>',
                      endpoint='bucketlist')
-    api.add_resource(BucketlistItemsApi, '/api/v1/bucketlists/<int: id>/items/',
+    api.add_resource(BucketlistItemsApi, '/api/v1/bucketlists/<id>/items/',
                      endpoint='bucketlistitems')
     api.add_resource(BucketlistItemApi,
-                     '/api/v1/bucketlists/<int: id>/items/<int: item_id>',
+                     '/api/v1/bucketlists/<id>/items/<item_id>',
                      endpoint='bucketlistitem')
     return app
