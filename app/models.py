@@ -45,6 +45,7 @@ class AddUpdateDelete():
 class UserModel(db.Model, AddUpdateDelete):
     """Defines the user table"""
     __tablename__ = "users"
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
@@ -67,7 +68,7 @@ class BucketlistModel(db.Model, AddUpdateDelete):
     """This class represents the bucketlist table."""
 
     __tablename__ = 'bucketlists'
-
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     items = db.relationship("bucketlistitem", backref="bucketlists",
@@ -102,6 +103,7 @@ class BucketlistModel(db.Model, AddUpdateDelete):
 class BucketListItem(db.Model, AddUpdateDelete):
     """Define the bucketlist  items table"""
     __tablename__ = "bucketlistitems"
+    __table_args__ = {'extend_existing': True}
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(40), nullable=False)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
