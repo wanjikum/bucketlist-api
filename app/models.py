@@ -10,9 +10,9 @@ class UserModel(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(30), nullable=False)
 
-    # def __repr__(self):
-    #     """returning a printable version for the object"""
-    #     return "<UserModel: {} {}>".format(self.first_name, self.last_name)
+    def __repr__(self):
+        """returning a printable version for the object"""
+        return "<UserModel: {} {}>".format(self.first_name, self.last_name)
 
 
 class BucketlistModel(db.Model):
