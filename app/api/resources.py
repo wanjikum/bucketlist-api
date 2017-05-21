@@ -29,8 +29,13 @@ class UserRegisterApi(Resource):
         # if they are not equal
         if password1 != password2:
             return 'The passwords provided do not match'
-        else:
-            return 'Amazing'
+
+        # get data provided by the user
+        first_name = new_user["first_name"]
+        last_name = new_user["last_name"]
+        email = new_user["email"]
+        password = new_user["password"]
+        return first_name, last_name, email, password
 
 
 class UserLoginApi(Resource):
