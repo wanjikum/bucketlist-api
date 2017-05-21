@@ -20,10 +20,10 @@ class UserRegisterSchema(Schema):
                               required=True,
                               error_messages={'required': 'Enter Last name'})
 
-    email = fields.String(load_only=True,
-                          validate=[validate.Length(min=5, max=30)],
-                          required=True,
-                          error_messages={'required': 'Enter email'})
+    email = fields.Email(load_only=True,
+                         validate=[validate.Length(min=5, max=30)],
+                         required=True,
+                         error_messages={'required': 'Enter email'})
     password = fields.String(load_only=True,
                              validate=[validate.Length(min=5)],
                              required=True,

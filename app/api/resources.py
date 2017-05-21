@@ -15,10 +15,22 @@ class UserRegisterApi(Resource):
         if not new_user:
             return {'error': 'No input provided'}, 400
 
-        # if validation errors
+        # check for validation errors
         validation_errors = get_user_register_schema.validate(new_user)
+
+        # Return validation errors if available
         if validation_errors:
-            return validation_errors
+            return validation_errors, 400
+
+        # check if both passwords given are equal
+        password1 = new_user["password"]
+        password2 = new_user["verify_password"]
+
+        # if they are not equal
+        if password1 != password2:
+            return 'The passwords provided do not match'
+        else:
+            return 'Amazing'
 
 
 class UserLoginApi(Resource):
