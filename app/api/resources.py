@@ -8,7 +8,7 @@ sys.path.insert(0, parentdir)
 from flask import request, jsonify
 from flask_restful import Resource, abort
 from app.api.schema import get_user_register_schema
-from app.models import UserModel, BucketlistModel
+from app.models import UserModel
 
 
 class UserRegisterApi(Resource):
@@ -43,7 +43,19 @@ class UserRegisterApi(Resource):
         last_name = new_user["last_name"].title()
         email = new_user["email"].lower()
         password = new_user["password"]
-        return first_name, last_name, email, password
+        user = UserModel(first_name=first_name,
+                         last_name=last_name,
+                         email=email,
+                         password=password)
+        user.add(user)
+        return "heeey"
+
+        # message = 'Thank you for registering, {}. ' \
+        #           'Your account has been successfully created. ' \
+        #           'Login to obtain an API authorization ' \
+        #           'token'.format(username)
+        #
+        # return success_response(message=message, status=201)
 
 
 class UserLoginApi(Resource):

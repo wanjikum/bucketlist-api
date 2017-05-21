@@ -64,21 +64,21 @@ class UserModel(db.Model, AddUpdateDelete):
         return "<UserModel: {} {}>".format(self.first_name, self.last_name)
 
 
-class BucketlistModel(db.Model, AddUpdateDelete):
-    """This class represents the bucketlist table."""
-
-    __tablename__ = 'bucketlists'
-    __table_args__ = {'extend_existing': True}
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-    items = db.relationship("bucketlistitem", backref="bucketlists",
-                            cascade='all, delete-orphan', lazy='dynamic')
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-    date_modified = db.Column(
-        db.DateTime, default=db.func.current_timestamp(),
-        onupdate=db.func.current_timestamp())
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"),
-                           nullable=False)
+# class BucketlistModel(db.Model, AddUpdateDelete):
+#     """This class represents the bucketlist table."""
+#
+#     __tablename__ = 'bucketlists'
+#     __table_args__ = {'extend_existing': True}
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(255))
+#     items = db.relationship("bucketlistitems", backref="bucketlists",
+#                             cascade='all, delete-orphan', lazy='dynamic')
+#     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+#     date_modified = db.Column(
+#         db.DateTime, default=db.func.current_timestamp(),
+#         onupdate=db.func.current_timestamp())
+    # created_by = db.Column(db.Integer, db.ForeignKey("users.id"),
+    #                        nullable=False)
 
     # def __init__(self, name):
     #     """initialize with name."""
@@ -100,15 +100,15 @@ class BucketlistModel(db.Model, AddUpdateDelete):
     #     return "<BucketlistModel: {}>".format(self.name)
 
 
-class BucketListItem(db.Model, AddUpdateDelete):
-    """Define the bucketlist  items table"""
-    __tablename__ = "bucketlistitems"
-    __table_args__ = {'extend_existing': True}
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(40), nullable=False)
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-    date_modified = db.Column(
-        db.DateTime, default=db.func.current_timestamp(),
-        onupdate=db.func.current_timestamp())
-    done = db.Column(db.Boolean(), default=False)
-    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'))
+# class BucketListItem(db.Model, AddUpdateDelete):
+#     """Define the bucketlist  items table"""
+#     __tablename__ = "bucketlistitems"
+#     __table_args__ = {'extend_existing': True}
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     name = db.Column(db.String(40), nullable=False)
+#     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+#     date_modified = db.Column(
+#         db.DateTime, default=db.func.current_timestamp(),
+#         onupdate=db.func.current_timestamp())
+#     done = db.Column(db.Boolean(), default=False)
+#     bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'))
