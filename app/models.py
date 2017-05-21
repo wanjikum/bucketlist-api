@@ -1,7 +1,41 @@
 from app import db
 
 
-class UserModel(db.Model):
+class AddUpdateDelete():
+    """
+    A class that declares the following three methods to add, update,
+    and delete a resource through SQLAlchemy sessions
+    """
+
+    def add(self, resource):
+        """
+        This method receives the object to be added in the resource argument
+        and calls the db.session.add method with the received resource as an
+        argument to create the object in the underlying database. Finally,
+        the code commits the session.
+        """
+        db.session.add(resource)
+        return db.session.commit()
+
+    def update(self):
+        """
+        This method just commits the session to persist the changes made
+        to the objects in the underlying database.
+        """
+        return db.session.commit()
+
+    def delete(self, resource):
+        """
+         This method receives the object to be deleted in the resource argument
+         and calls the db.session.delete method with the received resource as
+         an argument to remove the object in the underlying database. Finally,
+         the code commits the session.
+         """
+        db.session.delete(resource)
+        return db.session.commit()
+
+
+class UserModel(db.Model, AddUpdateDelete):
     """Defines the user table"""
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -22,7 +56,7 @@ class UserModel(db.Model):
         return "<UserModel: {} {}>".format(self.first_name, self.last_name)
 
 
-class BucketlistModel(db.Model):
+class BucketlistModel(db.Model, AddUpdateDelete):
     """This class represents the bucketlist table."""
 
     __tablename__ = 'bucketlists'
@@ -58,7 +92,7 @@ class BucketlistModel(db.Model):
     #     return "<BucketlistModel: {}>".format(self.name)
 
 
-class BucketListItem(db.Model):
+class BucketListItem(db.Model, AddUpdateDelete):
     """Define the bucketlist  items table"""
     __tablename__ = "bucketlistitems"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
