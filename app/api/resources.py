@@ -8,6 +8,7 @@ sys.path.insert(0, parentdir)
 from flask import request, jsonify
 from flask_restful import Resource, abort
 from app.api.schema import get_user_register_schema
+from app.models import UserModel, BucketlistModel
 
 
 class UserRegisterApi(Resource):
@@ -38,9 +39,9 @@ class UserRegisterApi(Resource):
             return 'The passwords provided do not match'
 
         # get data provided by the user
-        first_name = new_user["first_name"]
-        last_name = new_user["last_name"]
-        email = new_user["email"]
+        first_name = new_user["first_name"].title()
+        last_name = new_user["last_name"].title()
+        email = new_user["email"].lower()
         password = new_user["password"]
         return first_name, last_name, email, password
 

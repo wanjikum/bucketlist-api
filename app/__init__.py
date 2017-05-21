@@ -2,12 +2,7 @@ from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from instance.config import app_config
-from app.api.resources import (UserRegisterApi,
-                               UserLoginApi,
-                               BucketlistApi,
-                               BucketlistsApi,
-                               BucketlistItemApi,
-                               BucketlistItemsApi)
+from app.api.resources import *
 
 
 # Control the SQLAlchemy integration for our Flask application
