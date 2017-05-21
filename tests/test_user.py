@@ -10,7 +10,7 @@ class UserTestCases(BaseUserTest):
         """Creates a new user"""
 
         # register a new user
-        new_user = self.client.post('/auth/register/',
+        new_user = self.client.post('/api/v1/auth/register/',
                                     data=json.dumps(self.user))
         # return the response
         return new_user
@@ -26,7 +26,7 @@ class UserTestCases(BaseUserTest):
         """Test API rejects registration of a user who has invalid input"""
 
         # register a new user using invalid input(bad request)
-        response = self.client.post('/auth/register/',
+        response = self.client.post('/api/v1/auth/register/',
                                     data=json.dumps(self.invalid_user))
         self.assertEqual(response.status_code, 400)
 

@@ -3,24 +3,23 @@ from flask import jsonify
 # define a blue print of a response that contains error(s)
 
 
-def error_response(validation_errors=None,
-                   message='Please correct the identified errors, \
-                   for correct output',
-                   status=400,
-                   error='Bad request'):
+def error_response(status=400,
+                   error='Bad request',
+                   message='Correct the following identified errors',
+                   validation_errors=None):
 
     # A blue print of a response that contains validation error(s)
     if validation_errors:
         response = jsonify(
             {'status': status,
              'error': error,
-             'validation_errors': validation_errors,
-             'message': message}
-        )
+             'message': message,
+             'validation_errors': validation_errors})
 
     else:
         response = jsonify(
-            {'status': status, 'error': error,
+            {'status': status,
+             'error': error,
              'message': message}
         )
 

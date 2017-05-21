@@ -1,7 +1,7 @@
 import unittest
 from flask import json
 from instance.config import app_config
-from app.models import UserModel, BucketlistModel, BucketListItem
+from app.models import UserModel
 from app import create_app, db
 
 
