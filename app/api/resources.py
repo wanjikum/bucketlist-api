@@ -43,10 +43,17 @@ class UserRegisterApi(Resource):
         last_name = new_user["last_name"].title()
         email = new_user["email"].lower()
         password = new_user["password"]
+
+        # reject adding a
+        user_by_email = UserModel.query.filter_by(email=email).first()
+        if user_by_email:
+            return {'error': 'The email provided is already taken'}, 422
         user = UserModel(first_name=first_name,
                          last_name=last_name,
                          email=email,
                          password=password)
+
+        # add user to the database
         user.add(user)
         return "heeey"
 
