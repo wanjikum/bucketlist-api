@@ -36,7 +36,7 @@ class UserRegisterApi(Resource):
 
         # if they are not equal
         if password1 != password2:
-            return 'The passwords provided do not match'
+            return {'error': 'The passwords provided do not match'}, 404
 
         # get data provided by the user
         first_name = new_user["first_name"].title()
@@ -47,7 +47,7 @@ class UserRegisterApi(Resource):
         # reject adding a
         user_by_email = UserModel.query.filter_by(email=email).first()
         if user_by_email:
-            return {'error': 'The email provided is already taken'}, 422
+            return {'error': 'The email provided already exists!'}, 422
         user = UserModel(first_name=first_name,
                          last_name=last_name,
                          email=email,
