@@ -7,8 +7,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 from flask import request, jsonify
 from flask_restful import Resource, abort
-from models import *
-from schema import get_user_register_schema
+from app.api.schema import get_user_register_schema
 
 
 class UserRegisterApi(Resource):
