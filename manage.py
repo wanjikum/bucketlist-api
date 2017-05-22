@@ -17,6 +17,8 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def create_db():
     """Creates database with tables"""
+    os.system('createdb bucketlist_db')
+    os.system('createdb test_bucketlist_db')
     db.create_all()
     db.session.commit()
 
@@ -24,8 +26,8 @@ def create_db():
 @manager.command
 def drop_db():
     """Deletes database"""
-    db.drop_all()
-
+    os.system('dropdb bucketlist_db')
+    os.system('dropdb test_bucketlist_db')
 
 if __name__ == '__main__':
     manager.run()
