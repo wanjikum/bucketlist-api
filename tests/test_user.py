@@ -26,7 +26,7 @@ class UserTestCases(BaseUserTest):
         """Test API rejects registration of a user who has invalid input"""
 
         # register a new user using invalid input(bad request)
-        response = self.client.post('/api/v1/auth/register/',
+        response = self.client.post('/api/v1/auth/register',
                                     data=json.dumps(self.invalid_user))
         self.assertEqual(response.status_code, 400)
 
@@ -44,7 +44,7 @@ class UserTestCases(BaseUserTest):
     def test_login_user_successfully(self):
         """ Tests API logs in a user successfully """
         # login a new user
-        response = self.client.post('/auth/login/',
+        response = self.client.post('/api/v1/auth/login',
                                     data=json.dumps(self.login))
         self.assertEqual(response.status_code, 200)
 
@@ -52,7 +52,7 @@ class UserTestCases(BaseUserTest):
         """ Tests API  """
 
         # login a user with no username
-        response = self.client.post('/auth/login/',
+        response = self.client.post('/api/v1/auth/login',
                                     data=json.dumps(
                                         self.login_with_no_username))
         self.assertEqual(response.status_code, 400)
@@ -61,7 +61,7 @@ class UserTestCases(BaseUserTest):
         """ Tests API  """
 
         # login a user with no password
-        response = self.client.post('/auth/login/',
+        response = self.client.post('/api/v1/auth/login',
                                     data=json.dumps(
                                         self.login_with_no_password))
         self.assertEqual(response.status_code, 400)
@@ -70,7 +70,7 @@ class UserTestCases(BaseUserTest):
         """ Tests API  """
 
         # login a user with no credentials
-        response = self.client.post('/auth/login/',
+        response = self.client.post('/api/v1/auth/login',
                                     data=json.dumps(
                                         self.login_no_credentials))
         self.assertEqual(response.status_code, 400)
