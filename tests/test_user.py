@@ -10,8 +10,16 @@ class UserTestCases(BaseUserTest):
         """Creates a new user"""
 
         # register a new user
-        new_user = self.client.post('/api/v1/auth/register/',
-                                    data=json.dumps(self.user))
+        new_user = self.client.post('/api/v1/auth/register',
+                                    data=json.dumps(dict(
+            first_name="milly1",
+            last_name="shiko",
+            email="milly4@gmail.com",
+            password="password",
+            verify_password="password"
+        )),
+        content_type='application/json')
+
         # return the response
         return new_user
 

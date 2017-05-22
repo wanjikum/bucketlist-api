@@ -1,8 +1,8 @@
 import unittest
 from flask import json
 from instance.config import app_config
-from app.models import UserModel
-from app import create_app, db
+from app.models import UserModel, db
+from app import create_app
 
 
 class BaseUserTest(unittest.TestCase):
