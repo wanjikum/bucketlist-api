@@ -1,33 +1,87 @@
 import json
-from tests.user_basetest import BaseUserTest
-from app import db
+import os
+import unittest
+from flask import json
+from instance.config import app_config
+from app.models import db
+from app import create_app
+TEST_PATH = os.path.abspath(os.path.dirname(__file__))
 
-
-class UserTestCases(BaseUserTest):
+class UserTestCases(unittest.TestCase):
     """A collection of user login and registration testcases"""
+    def setUp(self):
+        print("Setup")
+        self.app = create_app('testing')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
 
-    def register_new_user(self):
-        """Creates a new user"""
+        # Create a test client our application
+        self.client = self.app.test_client()
 
-        # register a new user
-        new_user = self.client.post('/api/v1/auth/register',
-                                    data=json.dumps(dict(
-            first_name="milly1",
-            last_name="shiko",
-            email="milly4@gmail.com",
-            password="password",
-            verify_password="password"
-        )),
-        content_type='application/json')
+        # User registration
+        self.user = {
+            "first_name":"milly5",
+            "last_name":"shiko6",
+            "email":"milly0@gmail.com",
+            "password":"password",
+            "verify_password":"password"
+        }
 
-        # return the response
-        return new_user
+        # register user with no registration details
+        self.invalid_user = {
+            'first_name': '',
+            'last_name': '',
+            'email': '',
+            'password': '',
+            'verify_password': ''
+        }
+
+        # User login
+        self.login = {
+            'username': 'millicent.njuguna@gmail.com',
+            'password': 'password'
+        }
+
+        # Login with no username
+        self.login_with_no_username = {
+            'username': '',
+            'password': 'password'
+        }
+
+        # Login with no password
+        self.login_with_no_password = {
+            'username': 'millicent.njuguna@gmail.com',
+            'password': ''
+        }
+
+        # Login with no username and password
+        self.login_no_credentials = {
+            'username': '',
+            'password': ''
+        }
+    def tearDown(self):
+        print("tearDown")
+        # Delete the test database
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+
+
+    def headers(self):
+        api_headers= {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+        }
+        return api_headers
 
     def test_register_user_successfully(self):
         """ Tests API registers a user successfully """
 
         # register a new user
-        response = self.register_new_user()
+        response = self.client.post('/api/v1/auth/register',
+                                    headers=self.headers(),
+                                    data=json.dumps(self.user))
         self.assertEqual(response.status_code, 200)
 
     def test_register_user_with_no_details(self):
@@ -42,18 +96,35 @@ class UserTestCases(BaseUserTest):
         """Test API rejects registering an existing user"""
 
         # register a new user
-        user1_response = self.register_new_user()
+        self.client.post('/api/v1/auth/register', headers=self.headers(),
+                         data=json.dumps(self.user))
 
         # register the new user again
-        user2_response = self.register_new_user()
+        response = self.client.post('/api/v1/auth/register',
+                                    headers=self.headers(),
+                                    data=json.dumps(self.user))
 
-        self.assertEqual(user2_response.status_code, 409)
+        self.assertEqual(response.status_code, 409)
 
     def test_login_user_successfully(self):
         """ Tests API logs in a user successfully """
         # login a new user
-        response = self.client.post('/api/v1/auth/login',
-                                    data=json.dumps(self.login))
+        user = {
+            "first_name":"milly",
+            "last_name":"shiko6",
+            "email":"milly1@gmail.com",
+            "password":"password",
+            "verify_password":"password"
+        }
+
+        self.client.post('/api/v1/auth/register', headers=self.headers(),
+                                    data=json.dumps(user))
+        user_login = {
+            "email":"milly1@gmail.com",
+            "password":"password"
+        }
+        response = self.client.post('/api/v1/auth/login', headers=self.headers(),
+                                    data=json.dumps(user_login))
         self.assertEqual(response.status_code, 200)
 
     def test_login_user_with_no_username_but_has_password(self):
@@ -82,9 +153,3 @@ class UserTestCases(BaseUserTest):
                                     data=json.dumps(
                                         self.login_no_credentials))
         self.assertEqual(response.status_code, 400)
-
-    def tearDown(self):
-        """teardown all initialized variables."""
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()

@@ -1,5 +1,7 @@
 import os
 
+BASE_URL = os.path.abspath(os.path.dirname(__file__))
+
 from app import create_app
 
 # config_name = "development"

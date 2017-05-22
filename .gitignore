@@ -6,3 +6,4 @@ venv/
 *.db
 *.sqlite
 *.pyc
+test_bucketlist_db
