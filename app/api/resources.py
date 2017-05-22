@@ -69,7 +69,14 @@ class UserRegisterApi(Resource):
 
 class UserLoginApi(Resource):
     """Contains the user login and register functionalities"""
-    pass
+    def post(self):
+        
+        # get the login information
+        user = request.get_json()
+
+        #if no data provided
+        if not user:
+            return error_response(message='No input provided')
 
 
 class BucketlistApi(Resource):
