@@ -5,12 +5,13 @@ currentdir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 
 from app.__init__ import db
-
+secret_key = os.getenv('SECRET')
 
 class AddUpdateDelete():
     """
@@ -70,12 +71,12 @@ class UserModel(db.Model, AddUpdateDelete):
         return check_password_hash(self.password, password)
 
     def generate_auth_token(self, expiration = 600):
-        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+        s = Serializer(secret_key, expires_in = expiration)
         return s.dumps({ 'id': self.id })
 
     @staticmethod
     def verify_auth_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
+        s = Serializer(secret_key)
         try:
             data = s.loads(token)
         except SignatureExpired:

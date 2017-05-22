@@ -84,12 +84,26 @@ class UserLoginApi(Resource):
         # Return validation errors if available
         if validation_errors:
             return error_response(validation_errors=validation_errors)
+
+        # Get data provided by the user
+        email = user["email"].lower()
+        password = user["password"]
+
+        # Check if the email provided exists
+        user_by_email = UserModel.query.filter_by(email=email).first()
+
+        # Check if user email exists
+        if not user_by_email:
+            return error_response(message='The email provided does not exist' \
+            ', kindly register')
+
+        # check if email provided matches with the password which exists
+        if user_by_email.check_password(password):
+            token = user_by_email.generate_auth_token()
+            return success_response(status=200, message="Login successful!")
         else:
-            return "WE ARE GOOD"
-
-
-
-
+            return error_response(message="Either email or password"\
+                                  " is incorrect")
 
 class BucketlistApi(Resource):
     """Contains all bucketlist functionalities"""
