@@ -21,7 +21,7 @@ class UserRegisterSchema(Schema):
                               error_messages={'required': 'Enter Last name'})
 
     email = fields.Email(load_only=True,
-                         validate=[validate.Length(min=5, max=30)],
+                         validate=[validate.Length(min=5, max=50)],
                          required=True,
                          error_messages={'required': 'Enter email'})
     password = fields.String(load_only=True,
@@ -38,8 +38,8 @@ class UserLoginSchema(Schema):
     """
     Schema to validate, serialize, and deserialize user login data
     """
-    email = fields.String(load_only=True,
-                          validate=[validate.Length(max=12)],
+    email = fields.Email(load_only=True,
+                          validate=[validate.Length(max=50)],
                           required=True,
                           error_messages={'required': 'Enter email'})
     password = fields.String(load_only=True,

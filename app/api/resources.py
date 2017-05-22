@@ -7,7 +7,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 from flask import request
 from flask_restful import Resource, abort
-from app.api.schema import get_user_register_schema
+from app.api.schema import get_user_register_schema, get_user_login_schema
 from app.api.responses import error_response, success_response
 from app.models import UserModel
 
@@ -70,13 +70,25 @@ class UserRegisterApi(Resource):
 class UserLoginApi(Resource):
     """Contains the user login and register functionalities"""
     def post(self):
-        
+
         # get the login information
         user = request.get_json()
 
         #if no data provided
         if not user:
             return error_response(message='No input provided')
+
+        # check if the input has validation errors
+        validation_errors = get_user_login_schema.validate(user)
+
+        # Return validation errors if available
+        if validation_errors:
+            return error_response(validation_errors=validation_errors)
+        else:
+            return "WE ARE GOOD"
+
+
+
 
 
 class BucketlistApi(Resource):
