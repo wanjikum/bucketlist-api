@@ -5,6 +5,8 @@ currentdir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from app.__init__ import db
 
 
@@ -50,7 +52,7 @@ class UserModel(db.Model, AddUpdateDelete):
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(30), nullable=False)
+    password = db.Column(db.String(200), nullable=False)
 
     def __init__(self, first_name, last_name, email, password):
         """user model constructor"""
@@ -58,6 +60,12 @@ class UserModel(db.Model, AddUpdateDelete):
         self.last_name = last_name
         self.email = email
         self.password = password
+
+    def set_password(self, password):
+        self.password = generate_password_hash(self.password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
     def __repr__(self):
         """returning a printable version for the object"""

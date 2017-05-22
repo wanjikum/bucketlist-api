@@ -12,6 +12,7 @@ from app.api.responses import error_response, success_response
 from app.models import UserModel
 
 
+
 class UserRegisterApi(Resource):
     """Contains the user register functionalities"""
 
@@ -57,7 +58,9 @@ class UserRegisterApi(Resource):
                          password=password)
 
         # add user to the database
+        user.set_password(password)
         user.add(user)
+
         message = 'Congratulations {}!!!.'\
             'Your account has been successfully created.'\
             'Login to get started!'.format(first_name)
