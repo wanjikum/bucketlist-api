@@ -83,7 +83,7 @@ class UserModel(db.Model, AddUpdateDelete):
             return None # valid token, but expired
         except BadSignature:
             return None # invalid token
-        user = User.query.get(data['id'])
+        user = UserModel.query.get(data['id'])
         return user
 
     def __repr__(self):

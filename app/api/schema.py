@@ -10,22 +10,18 @@ class UserRegisterSchema(Schema):
     """
     Schema to validate, serialize, and deserialize user registration data
     """
-    first_name = fields.String(
-                               validate=[validate.Length(min=2, max=12)],
+    first_name = fields.String(validate=[validate.Length(min=2, max=12)],
                                required=True,
                                error_messages={'required': 'Enter first name'})
 
-    last_name = fields.String(
-                              validate=[validate.Length(min=2, max=12)],
+    last_name = fields.String(validate=[validate.Length(min=2, max=12)],
                               required=True,
                               error_messages={'required': 'Enter Last name'})
 
-    email = fields.Email(
-                         validate=[validate.Length(min=5, max=50)],
+    email = fields.Email(validate=[validate.Length(min=5, max=50)],
                          required=True,
                          error_messages={'required': 'Enter email'})
-    password = fields.String(
-                             validate=[validate.Length(min=5)],
+    password = fields.String(validate=[validate.Length(min=5)],
                              required=True,
                              error_messages={'required': 'Enter password'})
     verify_password = fields.String(

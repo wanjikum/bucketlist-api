@@ -1,11 +1,9 @@
 import json
-import os
 import unittest
 from flask import json
 from instance.config import app_config
 from app.models import db
 from app import create_app
-TEST_PATH = os.path.abspath(os.path.dirname(__file__))
 
 class UserTestCases(unittest.TestCase):
     """A collection of user login and registration testcases"""
@@ -61,7 +59,6 @@ class UserTestCases(unittest.TestCase):
             'password': ''
         }
     def tearDown(self):
-        print("tearDown")
         # Delete the test database
         db.session.remove()
         db.drop_all()

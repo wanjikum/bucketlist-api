@@ -5,11 +5,39 @@ currentdir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
-from flask import request
-from flask_restful import Resource, abort
-from app.api.schema import get_user_register_schema, get_user_login_schema
+from flask import request, g, jsonify
+from flask_restful import Resource
+from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
+
+from app.api.schema import (get_user_register_schema,
+                            get_user_login_schema,
+                            get_bucketlist_schema)
 from app.api.responses import error_response, success_response
-from app.models import UserModel
+from app.models import UserModel, BucketlistModel, BucketListItem
+
+# create an instance of the flask_httpauth.HTTPBasicAuth class named auth
+auth = HTTPTokenAuth()
+
+
+#  declare the verify_user_password function that receives a name
+# and a password as arguments
+# function uses the @auth.verify_password decorator to make this function
+# become the callback that Flask-HTTPAuth will use to verify the password
+# for a specific user
+@auth.verify_token
+def verify_user_token(token):
+
+    # verify token for the current user
+    current_user = UserModel.verify_auth_token(token)
+    if type(current_user) is not UserModel:
+        return False
+
+    else:
+        g.user = current_user
+        return True
+
+class AuthRequiredResource(Resource):
+    method_decorators = [auth.login_required]
 
 
 
@@ -68,7 +96,7 @@ class UserRegisterApi(Resource):
 
 
 class UserLoginApi(Resource):
-    """Contains the user login and register functionalities"""
+    """Contains the user login and functionalities"""
     def post(self):
 
         # get the login information
@@ -100,17 +128,29 @@ class UserLoginApi(Resource):
         # check if email provided matches with the password which exists
         if user_by_email.check_password(password):
             token = user_by_email.generate_auth_token()
-            return success_response(status=200, message="Login successful!")
+            print(token)
+
+            return jsonify(status=200, message="Login successful!")
         else:
             return error_response(message="Either email or password"\
                                   " is incorrect")
 
+class BucketlistsApi(AuthRequiredResource):
+    """
+    A function that creates a new bucket list and lists all the
+    created bucket lists
+    """
+    def post(self):
+        """A function that creates a new bucketlist"""
+        new_bucketlist = request.get_json()
+
+        # Check if there is any data provided by the user
+        if not new_bucketlist:
+            return error_response(message='No input provided')
+
+
+
 class BucketlistApi(Resource):
-    """Contains all bucketlist functionalities"""
-    pass
-
-
-class BucketlistsApi(Resource):
     """Contains all bucketlists functionalities"""
     pass
 
