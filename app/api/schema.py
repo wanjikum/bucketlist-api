@@ -48,9 +48,8 @@ class BucketListItemSchema(Schema):
     Schema to validate, serialize, and deserialize buckelist data
     """
     id = fields.Integer(dump_only=True)
-    name = fields.String(required=True,
-                         error_messages={
-                             'required': 'Enter a bucketlist item name'})
+    name = fields.String(required=True, validate=[validate.Length(min=2)],
+                error_messages={'required': 'Enter a bucketlist item name'})
     date_created = fields.DateTime(dump_only=True)
     date_modified = fields.DateTime(dump_only=True)
     done = fields.Boolean()

@@ -355,7 +355,7 @@ class BucketlistItemsApi(AuthRequiredResource):
         # Return a success message
         return success_response(message='Bucket list item {} created ' \
                                 'successfully!'.format(name), status=201,
-                        added=get_bucketlist_item_schema.dump(new_bucketlist_item).data)
+                added=get_bucketlist_item_schema.dump(new_bucketlist_item).data)
 
 
     def delete(self, id):
