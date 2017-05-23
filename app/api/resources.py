@@ -314,15 +314,23 @@ class BucketlistApi(AuthRequiredResource):
 
 
 class BucketlistItemsApi(AuthRequiredResource):
-    """
-    A class that creates a new item in bucket list and deletes all bucketlist
-    items
-    """
+    """ A class that creates a new item in bucket list """
 
     def post(self, id):
         """
         A function that creates a new item in bucket list
         """
+        # Get the current user
+        current_user = g.user.id
+
+        # Query the bucket list to find the bucketlist owner
+        bucketlist = BucketlistModel.query.filter_by(id=id,
+            created_by=current_user).first()
+
+        if not bucketlist:
+            return error_response(status=404, error="Not found",
+                message="The bucketlist with id {} does not exist!".format(id))
+
         new_bucketlist_item = request.get_json()
 
         # Check if there is any data provided by the user
@@ -332,7 +340,7 @@ class BucketlistItemsApi(AuthRequiredResource):
         # check for validation errors
         validation_errors = get_bucketlist_item_schema.validate(new_bucketlist_item)
 
-        #if there are validation errors
+        # if there are validation errors
         if validation_errors:
             return error_response(validation_errors=validation_errors)
 
@@ -358,15 +366,18 @@ class BucketlistItemsApi(AuthRequiredResource):
                 added=get_bucketlist_item_schema.dump(new_bucketlist_item).data)
 
 
-    def delete(self, id):
-        """
-        A function that deletes all bucketlist items in bucket list
-        """
-        print("I am dwfioiwing a new bucketlist item")
-
-
-class BucketlistItemApi(Resource):
+class BucketlistItemApi(AuthRequiredResource):
     """
-    Updates a bucket list item and deletes an item in a bucket list
+    Updates a bucket list item sand deletes an item in a bucket list
     """
-    pass
+    def put(self, id, item_id):
+        """Updates a bucket list item"""
+        return "Lets do this put"
+
+    def get(self, id, item_id):
+        """Updates a bucket list item"""
+        return "Lets do this get"
+
+    def delete(self, id, item_id):
+        """delete a bucket list item"""
+        return "Lets do this delete"
