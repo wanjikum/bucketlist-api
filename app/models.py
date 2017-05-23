@@ -70,7 +70,7 @@ class UserModel(db.Model, AddUpdateDelete):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-    def generate_auth_token(self, expiration = 600):
+    def generate_auth_token(self, expiration = 60000):
         s = Serializer(secret_key, expires_in = expiration)
         return s.dumps({ 'id': self.id })
 

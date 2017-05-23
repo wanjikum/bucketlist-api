@@ -130,7 +130,7 @@ class UserLoginApi(Resource):
             token = user_by_email.generate_auth_token()
             print(token)
 
-            return jsonify(status=200, message="Login successful!")
+            return jsonify(status=200, message="Login successful! Your token is "+str(token, 'utf-8'))
         else:
             return error_response(message="Either email or password"\
                                   " is incorrect")
@@ -147,6 +147,13 @@ class BucketlistsApi(AuthRequiredResource):
         # Check if there is any data provided by the user
         if not new_bucketlist:
             return error_response(message='No input provided')
+
+        # check for validation errors
+        validation_errors = get_bucketlist_schema.validate(new_bucketlist)
+
+        #if there are validation errors
+        if validation_errors:
+            return error_response(validation_errors=validation_errors)
 
 
 

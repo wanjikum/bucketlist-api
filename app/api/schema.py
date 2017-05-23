@@ -34,12 +34,10 @@ class UserLoginSchema(Schema):
     """
     Schema to validate, serialize, and deserialize user login data
     """
-    email = fields.Email(load_only=True,
-                          validate=[validate.Length(max=50)],
+    email = fields.Email(validate=[validate.Length(max=50)],
                           required=True,
                           error_messages={'required': 'Enter email'})
-    password = fields.String(load_only=True,
-                             validate=[validate.Length(min=5)],
+    password = fields.String(validate=[validate.Length(min=5)],
                              required=True,
                              error_messages={'required': 'Enter password'})
 
@@ -62,7 +60,7 @@ class BucketlistSchema(Schema):
     Schema to validate, serialize, and deserialize buckelist data
     """
     id = fields.Integer(dump_only=True)
-    name = fields.String(required=True,
+    name = fields.String(required=True, validate=[validate.Length(min=2)],
                          error_messages={
                              'required': 'Enter a bucketlist name'})
     items = fields.Nested(BucketListItemSchema, dump_only=True,
