@@ -428,8 +428,10 @@ class BucketlistItemApi(AuthRequiredResource):
 
     def get(self, id, item_id):
         """Updates a bucket list item"""
+
+        # Check if user has permissions
         bucketlist_item = self.verify_user_and_bucketlist(id, item_id)
-        return bucketlist_item
+        return get_bucketlist_item_schema.dump(bucketlist_item).data
 
     def delete(self, id, item_id):
         """delete a bucket list item"""
