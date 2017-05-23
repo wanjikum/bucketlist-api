@@ -202,10 +202,45 @@ class BucketlistsApi(AuthRequiredResource):
         return success_response(message='Bucket list {} created ' \
                                 'successfully!'.format(name), status=201)
 
+    def delete(self):
+        """Deletes all the bucket lists available"""
+        # Get the current user
+        current_user = g.user.id
+        print('name is', g.user.first_name, 'id is', g.user.id)
 
-class BucketlistApi(Resource):
-    """Contains all bucketlists functionalities"""
-    pass
+        # Query all the bucketlists available
+        # Returns an array of bucketlists
+        bucketlists = BucketlistModel.query.filter_by(created_by=current_user).all()
+        # print( 'this is my', bucketlists)
+
+        # if no bucketlists available
+        if not bucketlists:
+            return success_response(message='There are no bucketlists '\
+                                    'available. None has been deleted',
+                                    status=200)
+
+        # if available delete all bucketlists
+        bucketlist = [bucketlist.delete() for bucketlist in bucketlists]
+        return success_response(message='Bucketlists deleted '\
+                                'successfully!', status=200)
+
+
+class BucketlistApi(AuthRequiredResource):
+    """
+    A class that contains functionalities that gets single bucket list,
+    Updates a bucket list and deletes single bucket list
+    """
+    def get(self):
+        """A function that gets single bucket list"""
+        return "I am get"
+
+    def put(self):
+        """A function that Updates a bucket list"""
+        return "I am updating"
+
+    def delete(self):
+        """A function that deletes single bucket list"""
+        return "I am deleting"
 
 
 class BucketlistItemApi(Resource):
