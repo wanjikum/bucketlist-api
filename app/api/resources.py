@@ -370,14 +370,68 @@ class BucketlistItemApi(AuthRequiredResource):
     """
     Updates a bucket list item sand deletes an item in a bucket list
     """
+    def verify_user_and_bucketlist(self, id, item_id):
+        """verifys if user is the owner of the bucketlist"""
+        # Get the current user
+        current_user = g.user.id
+
+        # Query the bucket list to find the bucketlist owner
+        bucketlist = BucketlistModel.query.filter_by(id=id,
+            created_by=current_user).first()
+
+        # if not found
+        if not bucketlist:
+            return error_response(status=404, error="Not found",
+                message="The bucketlist with id {} does not exist!".format(id))
+
+        # check if the bucketlist item is in the bucketlist
+        existing_bucketlist_item = BucketListItem.query.filter_by(id=item_id,
+        bucketlist_id=id).first()
+
+        # if it does not
+        if not existing_bucketlist_item:
+            return error_response(status=404, error="Not found",
+                message="The bucketlist item with id {} does " \
+                    "not exist!".format(id))
+
+        return existing_bucketlist_item
+
+
     def put(self, id, item_id):
         """Updates a bucket list item"""
-        return "Lets do this put"
+
+        # check if user has permissions
+        bucketlist_item = self.verify_user_and_bucketlist(id, item_id)
+        new_bucketlist_item = request.get_json()
+
+        # Check if there is any data provided by the user
+        if not new_bucketlist_item:
+            return error_response(message='No input provided')
+
+        # check for validation errors
+        validation_errors = get_bucketlist_item_schema.validate(new_bucketlist_item)
+
+        # if there are validation errors
+        if validation_errors:
+            return error_response(validation_errors=validation_errors)
+
+        # Get the name of the new bucketlist item
+        bucketlist_item.name = new_bucketlist_item["name"]
+
+        # update it to the db
+        bucketlist_item.update()
+
+        # return a success message
+        return success_response(status=200, message="Updated successfully!",
+            modified=get_bucketlist_item_schema.dump(bucketlist_item).data)
+
 
     def get(self, id, item_id):
         """Updates a bucket list item"""
-        return "Lets do this get"
+        bucketlist_item = self.verify_user_and_bucketlist(id, item_id)
+        return bucketlist_item
 
     def delete(self, id, item_id):
         """delete a bucket list item"""
-        return "Lets do this delete"
+        bucketlist_item = self.verify_user_and_bucketlist(id, item_id)
+        return bucketlist_item

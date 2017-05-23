@@ -44,7 +44,7 @@ def success_response(message, status=200, added=None, modified=None):
         response = jsonify(
             {'status': status,
              'message': message,
-             'modified_to': modified}
+             'modified': modified}
         )
 
     else:
