@@ -253,7 +253,24 @@ class BucketlistApi(AuthRequiredResource):
 
     def put(self, id):
         """A function that Updates a bucket list"""
-        return "I am updating"
+
+        # Get the current user
+        current_user = g.user.id
+
+        # Query the bucket list with the id
+        bucketlist = BucketlistModel.query.filter_by(id=id,
+            created_by=current_user).first()
+
+
+        # There are no bucketlists available
+        if not bucketlist:
+            return error_response(status=404,
+                                  message="The bucketlist does not exist",
+                                  error="Page not found")
+
+
+
+
 
     def delete(self, id):
         """A function that deletes single bucket list"""

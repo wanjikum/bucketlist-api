@@ -4,6 +4,7 @@
 # add url field, bucketlistItem edit, get_many_bucketlists
 
 from marshmallow import Schema, fields, validate
+from flask import url_for
 
 
 class UserRegisterSchema(Schema):
@@ -68,6 +69,13 @@ class BucketlistSchema(Schema):
     date_created = fields.DateTime(dump_only=True)
     date_modified = fields.DateTime(dump_only=True)
     created_by = fields.Integer(attribute='users.id')
+    url = fields.Method('get_url')
+
+    @staticmethod
+    def get_url(obj):
+        return url_for('bucketlist', id=obj.id, _external=True)
+
+
 
 
 get_user_register_schema = UserRegisterSchema()
