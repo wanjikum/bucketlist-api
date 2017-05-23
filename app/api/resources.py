@@ -307,7 +307,6 @@ class BucketlistApi(AuthRequiredResource):
                                   error="Page not found")
 
         # Delete bucketlist
-        print(bucketlist)
         bucketlist.delete(bucketlist)
         return success_response(status=200, message="The bucketlist has been"\
             " deleted successfully")
@@ -435,5 +434,9 @@ class BucketlistItemApi(AuthRequiredResource):
 
     def delete(self, id, item_id):
         """delete a bucket list item"""
+
+        # Check if the user has permissions
         bucketlist_item = self.verify_user_and_bucketlist(id, item_id)
-        return bucketlist_item
+        bucketlist_item.delete(bucketlist_item)
+        return success_response(status=200, message="The bucketlist item {} " \
+            "has been deleted successfully".format(item_id))
