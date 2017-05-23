@@ -180,11 +180,11 @@ class BucketlistsApi(AuthRequiredResource):
         if validation_errors:
             return error_response(validation_errors=validation_errors)
 
-        # Get the name of the new bucketlist item
+        # Get the name of the new bucketlist
         name =new_bucketlist["name"]
         current_user = g.user.id
 
-        # Check if the bucketlist item exists
+        # Check if the bucketlist exists
         existing_bucketlist = BucketlistModel.query.filter_by(name=name,
         created_by=current_user).first()
 
@@ -282,16 +282,15 @@ class BucketlistApi(AuthRequiredResource):
         if validation_errors:
             return error_response(validation_errors=validation_errors)
 
-        # If everything is okay
+        # Update bucketlist, pick the new name
         bucketlist.name = bucketlist_update['name']
+
+        # update it to the db
         bucketlist.update()
+
+        # return a success message
         return success_response(status=200, message="Updated successfully!",
             modified=get_bucketlist_schema.dump(bucketlist).data)
-
-
-
-
-
 
     def delete(self, id):
         """A function that deletes single bucket list"""
