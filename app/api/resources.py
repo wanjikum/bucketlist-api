@@ -11,7 +11,8 @@ from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 
 from app.api.schema import (get_user_register_schema,
                             get_user_login_schema,
-                            get_bucketlist_schema)
+                            get_bucketlist_schema,
+                            get_bucketlist_item_schema)
 from app.api.responses import error_response, success_response
 from app.models import UserModel, BucketlistModel, BucketListItem
 
@@ -206,12 +207,10 @@ class BucketlistsApi(AuthRequiredResource):
         """Deletes all the bucket lists available"""
         # Get the current user
         current_user = g.user.id
-        print('name is', g.user.first_name, 'id is', g.user.id)
 
         # Query all the bucketlists available
         # Returns an array of bucketlists
         bucketlists = BucketlistModel.query.filter_by(created_by=current_user).all()
-        # print( 'this is my', bucketlists)
 
         # if no bucketlists available
         if not bucketlists:
@@ -314,11 +313,60 @@ class BucketlistApi(AuthRequiredResource):
             " deleted successfully")
 
 
+class BucketlistItemsApi(AuthRequiredResource):
+    """
+    A class that creates a new item in bucket list and deletes all bucketlist
+    items
+    """
+
+    def post(self, id):
+        """
+        A function that creates a new item in bucket list
+        """
+        new_bucketlist_item = request.get_json()
+
+        # Check if there is any data provided by the user
+        if not new_bucketlist_item:
+            return error_response(message='No input provided')
+
+        # check for validation errors
+        validation_errors = get_bucketlist_item_schema.validate(new_bucketlist_item)
+
+        #if there are validation errors
+        if validation_errors:
+            return error_response(validation_errors=validation_errors)
+
+        # Get the name of the new bucketlist
+        name = new_bucketlist_item["name"]
+
+        # Check if the bucketlist exists
+        existing_bucketlist_item = BucketListItem.query.filter_by(name=name,
+        bucketlist_id=id).first()
+
+        # if it exists throw an error message that it can't be recreated
+        if existing_bucketlist_item:
+            return error_response(status=409, error='Conflict',
+                message='Bucket list {} already exists!'.format(name))
+
+        # Add it to the database
+        new_bucketlist_item = BucketListItem(name=name, bucketlist_id=id)
+        new_bucketlist_item.add(new_bucketlist_item)
+
+        # Return a success message
+        return success_response(message='Bucket list item {} created ' \
+                                'successfully!'.format(name), status=201,
+                        added=get_bucketlist_item_schema.dump(new_bucketlist_item).data)
+
+
+    def delete(self, id):
+        """
+        A function that deletes all bucketlist items in bucket list
+        """
+        print("I am dwfioiwing a new bucketlist item")
+
+
 class BucketlistItemApi(Resource):
-    """Contains bucketlist item functionalities"""
-    pass
-
-
-class BucketlistItemsApi(Resource):
-    """Contains bucketlist items functionalities"""
+    """
+    Updates a bucket list item and deletes an item in a bucket list
+    """
     pass
