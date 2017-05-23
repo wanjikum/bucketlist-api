@@ -147,12 +147,10 @@ class BucketlistsApi(AuthRequiredResource):
         """Lists all the created bucket lists"""
         # Get the current user
         current_user = g.user.id
-        # print('name is', g.user.first_name, 'id is', g.user.id)
 
         # Query all the bucketlists available
         # Returns an array of bucketlists
         bucketlists = BucketlistModel.query.filter_by(created_by=current_user).all()
-        # print( 'this is my', bucketlists)
 
         # if no bucketlists available
         if not bucketlists:
@@ -163,6 +161,7 @@ class BucketlistsApi(AuthRequiredResource):
         # serialize obj to JSON formated str
         bucketlists = [get_bucketlist_schema.dump(bucketlist).data \
                        for bucketlist in bucketlists]
+
         return bucketlists
 
 
@@ -200,7 +199,8 @@ class BucketlistsApi(AuthRequiredResource):
 
         # Return a success message
         return success_response(message='Bucket list {} created ' \
-                                'successfully!'.format(name), status=201)
+                                'successfully!'.format(name), status=201,
+                                added=get_bucketlist_schema.dump(new_bucket_list).data)
 
     def delete(self):
         """Deletes all the bucket lists available"""
@@ -221,7 +221,7 @@ class BucketlistsApi(AuthRequiredResource):
 
         # if available delete all bucketlists
         bucketlist = [bucketlist.delete() for bucketlist in bucketlists]
-        return success_response(message='Bucketlists deleted '\
+        return success_response(message='Bucket lists deleted '\
                                 'successfully!', status=200)
 
 
@@ -230,15 +230,32 @@ class BucketlistApi(AuthRequiredResource):
     A class that contains functionalities that gets single bucket list,
     Updates a bucket list and deletes single bucket list
     """
-    def get(self):
+    def get(self, id):
         """A function that gets single bucket list"""
-        return "I am get"
 
-    def put(self):
+        # Get the current user
+        current_user = g.user.id
+
+        # Query the bucket list with the id
+        bucketlist = BucketlistModel.query.filter_by(id=id,
+            created_by=current_user).first()
+
+
+        # There are no bucketlists available
+        if not bucketlist:
+            return error_response(status=404,
+                                  message="The bucketlist does not exist",
+                                  error="Page not found")
+
+
+        return get_bucketlist_schema.dump(bucketlist).data
+
+
+    def put(self, id):
         """A function that Updates a bucket list"""
         return "I am updating"
 
-    def delete(self):
+    def delete(self, id):
         """A function that deletes single bucket list"""
         return "I am deleting"
 
