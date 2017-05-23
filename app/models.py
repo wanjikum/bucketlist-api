@@ -107,9 +107,10 @@ class BucketlistModel(db.Model, AddUpdateDelete):
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"),
                            nullable=False)
 
-    def __init__(self, name):
+    def __init__(self, name, created_by):
         """initialize with name."""
         self.name = name
+        self.created_by = created_by
 
     def save(self):
         db.session.add(self)

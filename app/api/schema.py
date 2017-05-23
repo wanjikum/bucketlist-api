@@ -67,7 +67,7 @@ class BucketlistSchema(Schema):
                           many=True)
     date_created = fields.DateTime(dump_only=True)
     date_modified = fields.DateTime(dump_only=True)
-    created_by = fields.Integer(attribute='users.id', dump_only=True)
+    created_by = fields.Integer(attribute='users.id')
 
 
 get_user_register_schema = UserRegisterSchema()

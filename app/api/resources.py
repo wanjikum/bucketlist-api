@@ -130,7 +130,9 @@ class UserLoginApi(Resource):
             token = user_by_email.generate_auth_token()
             print(token)
 
-            return jsonify(status=200, message="Login successful! Your token is "+str(token, 'utf-8'))
+            return jsonify(status=200,
+                           message="Login successful!" \
+                           " Your token is "+str(token, 'utf-8'))
         else:
             return error_response(message="Either email or password"\
                                   " is incorrect")
@@ -155,6 +157,17 @@ class BucketlistsApi(AuthRequiredResource):
         if validation_errors:
             return error_response(validation_errors=validation_errors)
 
+        # Get the name of the new bucketlist item
+        name =new_bucketlist["name"]
+        current_user = g.user.id
+
+        # Add it to the database
+        new_bucket_list = BucketlistModel(name=name, created_by=current_user)
+        new_bucket_list.add(new_bucket_list)
+
+        # Return a success message
+        return success_response(message='Bucketlist {} created ' \
+                                'successfully!'.format(name), status=201)
 
 
 class BucketlistApi(Resource):
