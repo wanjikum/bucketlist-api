@@ -75,7 +75,7 @@ class UserRegisterApi(Resource):
         email = new_user["email"].lower()
         password = new_user["password"]
 
-        # reject adding a
+        # reject adding a new_user
         user_by_email = UserModel.query.filter_by(email=email).first()
         if user_by_email:
             return error_response(status=409,
@@ -416,6 +416,7 @@ class BucketlistItemApi(AuthRequiredResource):
 
         # Get the name of the new bucketlist item
         bucketlist_item.name = new_bucketlist_item["name"]
+        bucketlist_item.done = new_bucketlist_item["done"]
 
         # update it to the db
         bucketlist_item.update()
