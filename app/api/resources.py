@@ -142,6 +142,30 @@ class BucketlistsApi(AuthRequiredResource):
     A function that creates a new bucket list and lists all the
     created bucket lists
     """
+
+    def get(self):
+        """Lists all the created bucket lists"""
+        # Get the current user
+        current_user = g.user.id
+        # print('name is', g.user.first_name, 'id is', g.user.id)
+
+        # Query all the bucketlists available
+        # Returns an array of bucketlists
+        bucketlists = BucketlistModel.query.filter_by(created_by=current_user).all()
+        # print( 'this is my', bucketlists)
+
+        # if no bucketlists available
+        if not bucketlists:
+            return success_response(message='There are no bucketlists '\
+                                    'available')
+
+        # if available
+        # serialize obj to JSON formated str
+        bucketlists = [get_bucketlist_schema.dump(bucketlist).data \
+                       for bucketlist in bucketlists]
+        return bucketlists
+
+
     def post(self):
         """A function that creates a new bucketlist"""
         new_bucketlist = request.get_json()
@@ -161,12 +185,21 @@ class BucketlistsApi(AuthRequiredResource):
         name =new_bucketlist["name"]
         current_user = g.user.id
 
+        # Check if the bucketlist item exists
+        existing_bucketlist = BucketlistModel.query.filter_by(name=name,
+        created_by=current_user).first()
+
+        # if it exists throw an error message that it can't be recreated
+        if existing_bucketlist:
+            return error_response(status=409, error='Conflict',
+                message='Bucket list {} already exists!'.format(name))
+
         # Add it to the database
         new_bucket_list = BucketlistModel(name=name, created_by=current_user)
         new_bucket_list.add(new_bucket_list)
 
         # Return a success message
-        return success_response(message='Bucketlist {} created ' \
+        return success_response(message='Bucket list {} created ' \
                                 'successfully!'.format(name), status=201)
 
 
