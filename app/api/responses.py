@@ -5,7 +5,7 @@ from flask import jsonify
 
 def error_response(status=400,
                    error='Bad request',
-                   message='Correct the following identified errors',
+                   message='Correct the following identified error(s)',
                    validation_errors=None):
 
     # A blue print of a response that contains validation error(s)
@@ -44,7 +44,7 @@ def success_response(message, status=200, added=None, modified=None):
         response = jsonify(
             {'status': status,
              'message': message,
-             'modified': modified}
+             'modified_to': modified}
         )
 
     else:

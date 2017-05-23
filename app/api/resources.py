@@ -268,6 +268,27 @@ class BucketlistApi(AuthRequiredResource):
                                   message="The bucketlist does not exist",
                                   error="Page not found")
 
+        # Check the new bucketlist update
+        bucketlist_update = request.get_json()
+
+        # If there is no data available
+        if not bucketlist_update:
+            return error_response(message='No input provided')
+
+        # Check for validation errors
+        validation_errors = get_bucketlist_schema.validate(bucketlist_update)
+
+        # If there are validation errors
+        if validation_errors:
+            return error_response(validation_errors=validation_errors)
+
+        # If everything is okay
+        bucketlist.name = bucketlist_update['name']
+        bucketlist.update()
+        return success_response(status=200, message="Updated successfully!",
+            modified=get_bucketlist_schema.dump(bucketlist).data)
+
+
 
 
 
