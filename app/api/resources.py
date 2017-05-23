@@ -200,7 +200,7 @@ class BucketlistsApi(AuthRequiredResource):
         # Return a success message
         return success_response(message='Bucket list {} created ' \
                                 'successfully!'.format(name), status=201,
-                                added=get_bucketlist_schema.dump(new_bucket_list).data)
+                        added=get_bucketlist_schema.dump(new_bucket_list).data)
 
     def delete(self):
         """Deletes all the bucket lists available"""
@@ -220,7 +220,7 @@ class BucketlistsApi(AuthRequiredResource):
                                     status=200)
 
         # if available delete all bucketlists
-        bucketlist = [bucketlist.delete() for bucketlist in bucketlists]
+        bucketlist = [bucketlist.delete(bucketlist) for bucketlist in bucketlists]
         return success_response(message='Bucket lists deleted '\
                                 'successfully!', status=200)
 
@@ -294,7 +294,24 @@ class BucketlistApi(AuthRequiredResource):
 
     def delete(self, id):
         """A function that deletes single bucket list"""
-        return "I am deleting"
+        # Get the current user
+        current_user = g.user.id
+
+        # Query the bucket list with the id
+        bucketlist = BucketlistModel.query.filter_by(id=id,
+            created_by=current_user).first()
+
+        # There are no bucketlists available
+        if not bucketlist:
+            return error_response(status=404,
+                                  message="The bucketlist does not exist",
+                                  error="Page not found")
+
+        # Delete bucketlist
+        print(bucketlist)
+        bucketlist.delete(bucketlist)
+        return success_response(status=200, message="The bucketlist has been"\
+            " deleted successfully")
 
 
 class BucketlistItemApi(Resource):
