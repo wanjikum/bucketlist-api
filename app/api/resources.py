@@ -129,11 +129,9 @@ class UserLoginApi(Resource):
         # check if email provided matches with the password which exists
         if user_by_email.check_password(password):
             token = user_by_email.generate_auth_token()
-            print(token)
 
-            return jsonify(status=200,
-                           message="Login successful!"
-                           " Your token is " + str(token, 'utf-8'))
+            return jsonify(status=200, token=str(token, 'utf-8'),
+                           message="Login successful!")
         else:
             return error_response(message="Either email or password"
                                   " is incorrect")

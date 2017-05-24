@@ -5,10 +5,12 @@ from instance.config import app_config
 from app.models import db
 from app import create_app
 
+
 class UserTestCases(unittest.TestCase):
     """A collection of user login and registration testcases"""
+
     def setUp(self):
-        print("Setup")
+
         self.app = create_app('testing')
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -19,11 +21,11 @@ class UserTestCases(unittest.TestCase):
 
         # User registration
         self.user = {
-            "first_name":"milly5",
-            "last_name":"shiko6",
-            "email":"milly0@gmail.com",
-            "password":"password",
-            "verify_password":"password"
+            "first_name": "milly5",
+            "last_name": "shiko6",
+            "email": "milly0@gmail.com",
+            "password": "password",
+            "verify_password": "password"
         }
 
         # register user with no registration details
@@ -58,17 +60,18 @@ class UserTestCases(unittest.TestCase):
             'username': '',
             'password': ''
         }
+
     def tearDown(self):
         # Delete the test database
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
 
-
     def headers(self):
-        api_headers= {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        api_headers = {
+            #  what the browser is able to digest
+            "Accept": "application/json",
+            "Content-Type": "application/json"
         }
         return api_headers
 
@@ -107,19 +110,23 @@ class UserTestCases(unittest.TestCase):
         """ Tests API logs in a user successfully """
         # login a new user
         user = {
-            "first_name":"milly",
-            "last_name":"shiko6",
-            "email":"milly1@gmail.com",
-            "password":"password",
-            "verify_password":"password"
+            "first_name": "milly",
+            "last_name": "shiko6",
+            "email": "milly1@gmail.com",
+            "password": "password",
+            "verify_password": "password"
+        }
+        # register a new user
+        self.client.post('/api/v1/auth/register', headers=self.headers(),
+                         data=json.dumps(user))
+
+        # login data
+        user_login = {
+            "email": "milly1@gmail.com",
+            "password": "password"
         }
 
-        self.client.post('/api/v1/auth/register', headers=self.headers(),
-                                    data=json.dumps(user))
-        user_login = {
-            "email":"milly1@gmail.com",
-            "password":"password"
-        }
+        # Login
         response = self.client.post('/api/v1/auth/login', headers=self.headers(),
                                     data=json.dumps(user_login))
         self.assertEqual(response.status_code, 200)
