@@ -538,4 +538,31 @@ class BucketlistItemApi(AuthRequiredResource):
 
         return get_bucketlist_item_schema.dump(existing_bucketlist_item).data
 
+    def delete(self, id, item_id):
+        """delete a bucket list item"""
+
+        # Get the current user
+        current_user = g.user.id
+
+        # Query the bucket list to find the bucketlist owner
+        bucketlist = BucketlistModel.query.filter_by(id=id,
+            created_by=current_user).first()
     
+        # if not found
+        if not bucketlist:
+            return error_response(status=404, error="Not found",
+                message="The bucketlist with id {} does not exist!".format(id))
+
+        # check if the bucketlist item is in the bucketlist
+        existing_bucketlist_item = BucketListItem.query.filter_by(id=item_id,
+        bucketlist_id=id).first()
+
+        # if it does not
+        if not existing_bucketlist_item:
+            return error_response(status=404, error="Not found",
+                message="The bucketlist item with id {} does " \
+                    "not exist!".format(item_id))
+
+        existing_bucketlist_item.delete(existing_bucketlist_item)
+        return success_response(status=200, message="The bucketlist item {} " \
+            "has been deleted successfully".format(item_id))
