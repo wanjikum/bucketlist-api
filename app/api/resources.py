@@ -35,9 +35,9 @@ def verify_user_token(token):
         g.user = current_user
         return True
 
+
 class AuthRequiredResource(Resource):
     method_decorators = [auth.login_required]
-
 
 
 class UserRegisterApi(Resource):
@@ -59,11 +59,11 @@ class UserRegisterApi(Resource):
         if validation_errors:
             return error_response(validation_errors=validation_errors)
 
-        # check if both passwords given are equal
+        # check if both passwords given are similar
         password1 = new_user["password"]
         password2 = new_user["verify_password"]
 
-        # if they are not equal
+        # if passwords not equal return an error response
         if password1 != password2:
             return error_response(message='Password mismatch')
 
@@ -73,7 +73,7 @@ class UserRegisterApi(Resource):
         email = new_user["email"].lower()
         password = new_user["password"]
 
-        # reject adding a new_user
+        # reject adding a new_user if he registers with an existing email
         user_by_email = UserModel.query.filter_by(email=email).first()
         if user_by_email:
             return error_response(status=409,
@@ -96,12 +96,13 @@ class UserRegisterApi(Resource):
 
 class UserLoginApi(Resource):
     """Contains the user login and functionalities"""
+
     def post(self):
 
         # get the login information
         user = request.get_json()
 
-        #if no data provided
+        # if no data provided
         if not user:
             return error_response(message='No input provided')
 
@@ -121,8 +122,8 @@ class UserLoginApi(Resource):
 
         # Check if user email exists
         if not user_by_email:
-            return error_response(message='The email provided does not exist' \
-            ', kindly register')
+            return error_response(message='The email provided does not exist'
+                                  ', kindly register')
 
         # check if email provided matches with the password which exists
         if user_by_email.check_password(password):
@@ -130,11 +131,12 @@ class UserLoginApi(Resource):
             print(token)
 
             return jsonify(status=200,
-                           message="Login successful!" \
-                           " Your token is "+str(token, 'utf-8'))
+                           message="Login successful!"
+                           " Your token is " + str(token, 'utf-8'))
         else:
-            return error_response(message="Either email or password"\
+            return error_response(message="Either email or password"
                                   " is incorrect")
+
 
 class BucketlistsApi(AuthRequiredResource):
     """
@@ -157,12 +159,11 @@ class BucketlistsApi(AuthRequiredResource):
 
         # Query all the bucketlists available
         # Returns an array of bucketlists
-        # BucketlistModel.query.filter_by(created_by=current_user).all()
 
         # if there are is no search term
         if not search_term:
             paginated_bucketlists = BucketlistModel.query.filter_by(
-            created_by=current_user).paginate(page, limit, error_out=True)
+                created_by=current_user).paginate(page, limit, error_out=True)
             print(paginated_bucketlists)
 
         # search bucketlists if search url argument exists
@@ -170,20 +171,20 @@ class BucketlistsApi(AuthRequiredResource):
             paginated_bucketlists = BucketlistModel.query.filter_by(
                 created_by=current_user).filter(BucketlistModel.name.ilike(
                     '%' + search_term + '%')).paginate(page, limit,
-                                                    error_out=True)
+                                                       error_out=True)
             print(paginated_bucketlists)
 
         # return 404 if the user doesn't have bucketlists
         if not paginated_bucketlists.items:
             return error_response(error='Not found', status=404,
-                              message='No bucketlists available')
+                                  message='No bucketlists available')
 
           # obtain prev_url and next_url
         if paginated_bucketlists.has_prev:
             previous_url = url_for(request.endpoint,
-                               q=search_term, limit=limit,
-                               page=paginated_bucketlists.prev_num,
-                               _external=True)
+                                   q=search_term, limit=limit,
+                                   page=paginated_bucketlists.prev_num,
+                                   _external=True)
 
         else:
             previous_url = None
@@ -198,25 +199,25 @@ class BucketlistsApi(AuthRequiredResource):
 
         # obtain first and last urls
         first_url = url_for(request.endpoint, q=search_term, limit=limit,
-                    page=1, _external=True)
+                            page=1, _external=True)
 
         last_url = url_for(request.endpoint, q=search_term,
-                   limit=limit, page=paginated_bucketlists.pages,
-                   _external=True)
+                           limit=limit, page=paginated_bucketlists.pages,
+                           _external=True)
 
         # serialize bucketlist objects
         result = get_bucketlists_schema.dump(paginated_bucketlists.items)
 
         return jsonify({
-        'page': page,
-        'limit': limit,
-        'pages': paginated_bucketlists.pages,
-        'prev_url': previous_url,
-        'next_url': next_url,
-        'first_url': first_url,
-        'last_url': last_url,
-        'total': paginated_bucketlists.total,
-        'bucketlist(s)': result.data})
+            'page': page,
+            'limit': limit,
+            'pages': paginated_bucketlists.pages,
+            'prev_url': previous_url,
+            'next_url': next_url,
+            'first_url': first_url,
+            'last_url': last_url,
+            'total': paginated_bucketlists.total,
+            'bucketlist(s)': result.data})
 
         # # if no bucketlists available
         # if not bucketlists:
@@ -230,7 +231,6 @@ class BucketlistsApi(AuthRequiredResource):
         #
         # return bucketlists
 
-
     def post(self):
         """A function that creates a new bucketlist"""
         new_bucketlist = request.get_json()
@@ -242,31 +242,31 @@ class BucketlistsApi(AuthRequiredResource):
         # check for validation errors
         validation_errors = get_bucketlist_schema.validate(new_bucketlist)
 
-        #if there are validation errors
+        # if there are validation errors
         if validation_errors:
             return error_response(validation_errors=validation_errors)
 
         # Get the name of the new bucketlist
-        name =new_bucketlist["name"]
+        name = new_bucketlist["name"]
         current_user = g.user.id
 
         # Check if the bucketlist exists
         existing_bucketlist = BucketlistModel.query.filter_by(name=name,
-        created_by=current_user).first()
+                                                              created_by=current_user).first()
 
         # if it exists throw an error message that it can't be recreated
         if existing_bucketlist:
             return error_response(status=409, error='Conflict',
-                message='Bucket list {} already exists!'.format(name))
+                                  message='Bucket list {} already exists!'.format(name))
 
         # Add it to the database
         new_bucket_list = BucketlistModel(name=name, created_by=current_user)
         new_bucket_list.add(new_bucket_list)
 
         # Return a success message
-        return success_response(message='Bucket list {} created ' \
+        return success_response(message='Bucket list {} created '
                                 'successfully!'.format(name), status=201,
-                        added=get_bucketlist_schema.dump(new_bucket_list).data)
+                                added=get_bucketlist_schema.dump(new_bucket_list).data)
 
     def delete(self):
         """Deletes all the bucket lists available"""
@@ -279,13 +279,13 @@ class BucketlistsApi(AuthRequiredResource):
 
         # if no bucketlists available
         if not bucketlists:
-            return success_response(message='There are no bucketlists '\
+            return success_response(message='There are no bucketlists '
                                     'available. None has been deleted',
                                     status=200)
 
         # if available delete all bucketlists
         bucketlist = [bucketlist.delete(bucketlist) for bucketlist in bucketlists]
-        return success_response(message='Bucket lists deleted '\
+        return success_response(message='Bucket lists deleted '
                                 'successfully!', status=200)
 
 
@@ -294,6 +294,7 @@ class BucketlistApi(AuthRequiredResource):
     A class that contains functionalities that gets single bucket list,
     Updates a bucket list and deletes single bucket list
     """
+
     def get(self, id):
         """A function that gets single bucket list"""
 
@@ -302,10 +303,9 @@ class BucketlistApi(AuthRequiredResource):
 
         # Query the bucket list with the id
         bucketlist = BucketlistModel.query.filter_by(id=id,
-            created_by=current_user).first()
+                                                     created_by=current_user).first()
 
         print(bucketlist)
-
 
         # There are no bucketlists available
         if not bucketlist:
@@ -313,9 +313,7 @@ class BucketlistApi(AuthRequiredResource):
                                   message="The bucketlist does not exist",
                                   error="Page not found")
 
-
         return get_bucketlist_schema.dump(bucketlist).data
-
 
     def put(self, id):
         """A function that Updates a bucket list"""
@@ -325,8 +323,7 @@ class BucketlistApi(AuthRequiredResource):
 
         # Query the bucket list with the id
         bucketlist = BucketlistModel.query.filter_by(id=id,
-            created_by=current_user).first()
-
+                                                     created_by=current_user).first()
 
         # There are no bucketlists available
         if not bucketlist:
@@ -356,7 +353,7 @@ class BucketlistApi(AuthRequiredResource):
 
         # return a success message
         return success_response(status=200, message="Updated successfully!",
-            modified=get_bucketlist_schema.dump(bucketlist).data)
+                                modified=get_bucketlist_schema.dump(bucketlist).data)
 
     def delete(self, id):
         """A function that deletes single bucket list"""
@@ -365,7 +362,7 @@ class BucketlistApi(AuthRequiredResource):
 
         # Query the bucket list with the id
         bucketlist = BucketlistModel.query.filter_by(id=id,
-            created_by=current_user).first()
+                                                     created_by=current_user).first()
 
         # There are no bucketlists available
         if not bucketlist:
@@ -375,8 +372,8 @@ class BucketlistApi(AuthRequiredResource):
 
         # Delete bucketlist
         bucketlist.delete(bucketlist)
-        return success_response(status=200, message="The bucketlist has been"\
-            " deleted successfully")
+        return success_response(status=200, message="The bucketlist has been"
+                                " deleted successfully")
 
 
 class BucketlistItemsApi(AuthRequiredResource):
@@ -391,11 +388,11 @@ class BucketlistItemsApi(AuthRequiredResource):
 
         # Query the bucket list to find the bucketlist owner
         bucketlist = BucketlistModel.query.filter_by(id=id,
-            created_by=current_user).first()
+                                                     created_by=current_user).first()
 
         if not bucketlist:
             return error_response(status=404, error="Not found",
-                message="The bucketlist with id {} does not exist!".format(id))
+                                  message="The bucketlist with id {} does not exist!".format(id))
 
         new_bucketlist_item = request.get_json()
 
@@ -415,53 +412,27 @@ class BucketlistItemsApi(AuthRequiredResource):
 
         # Check if the bucketlist exists
         existing_bucketlist_item = BucketListItem.query.filter_by(name=name,
-        bucketlist_id=id).first()
+                                                                  bucketlist_id=id).first()
 
         # if it exists throw an error message that it can't be recreated
         if existing_bucketlist_item:
             return error_response(status=409, error='Conflict',
-                message='Bucket list {} already exists!'.format(name))
+                                  message='Bucket list {} already exists!'.format(name))
 
         # Add it to the database
         new_bucketlist_item = BucketListItem(name=name, bucketlist_id=id)
         new_bucketlist_item.add(new_bucketlist_item)
 
         # Return a success message
-        return success_response(message='Bucket list item {} created ' \
+        return success_response(message='Bucket list item {} created '
                                 'successfully!'.format(name), status=201,
-                added=get_bucketlist_item_schema.dump(new_bucketlist_item).data)
+                                added=get_bucketlist_item_schema.dump(new_bucketlist_item).data)
 
 
 class BucketlistItemApi(AuthRequiredResource):
     """
     Updates a bucket list item sand deletes an item in a bucket list
     """
-    def verify_user_and_bucketlist(self, id, item_id):
-        """verifys if user is the owner of the bucketlist"""
-        # Get the current user
-        current_user = g.user.id
-
-        # Query the bucket list to find the bucketlist owner
-        bucketlist = BucketlistModel.query.filter_by(id=id,
-            created_by=current_user).first()
-
-        # if not found
-        if not bucketlist:
-            return error_response(status=404, error="Not found",
-                message="The bucketlist with id {} does not exist!".format(id))
-
-        # check if the bucketlist item is in the bucketlist
-        existing_bucketlist_item = BucketListItem.query.filter_by(id=item_id,
-        bucketlist_id=id).first()
-
-        # if it does not
-        if not existing_bucketlist_item:
-            return error_response(status=404, error="Not found",
-                message="The bucketlist item with id {} does " \
-                    "not exist!".format(id))
-
-        return existing_bucketlist_item
-
 
     def put(self, id, item_id):
         """Updates a bucket list item"""
@@ -471,22 +442,22 @@ class BucketlistItemApi(AuthRequiredResource):
 
         # Query the bucket list to find the bucketlist owner
         bucketlist = BucketlistModel.query.filter_by(id=id,
-            created_by=current_user).first()
+                                                     created_by=current_user).first()
 
         # if not found
         if not bucketlist:
             return error_response(status=404, error="Not found",
-                message="The bucketlist with id {} does not exist!".format(id))
+                                  message="The bucketlist with id {} does not exist!".format(id))
 
         # check if the bucketlist item is in the bucketlist
         existing_bucketlist_item = BucketListItem.query.filter_by(id=item_id,
-        bucketlist_id=id).first()
+                                                                  bucketlist_id=id).first()
 
         # if it does not
         if not existing_bucketlist_item:
             return error_response(status=404, error="Not found",
-                message="The bucketlist item with id {} does " \
-                    "not exist!".format(item_id))
+                                  message="The bucketlist item with id {} does "
+                                  "not exist!".format(item_id))
         new_bucketlist_item = request.get_json()
 
         # Check if there is any data provided by the user
@@ -500,6 +471,8 @@ class BucketlistItemApi(AuthRequiredResource):
         if validation_errors:
             return error_response(validation_errors=validation_errors)
 
+        #
+
         # Get the name of the new bucketlist item
         existing_bucketlist_item.name = new_bucketlist_item["name"]
         existing_bucketlist_item.done = new_bucketlist_item["done"]
@@ -509,8 +482,7 @@ class BucketlistItemApi(AuthRequiredResource):
 
         # return a success message
         return success_response(status=200, message="Updated successfully!",
-            modified=get_bucketlist_item_schema.dump(existing_bucketlist_item).data)
-
+                                modified=get_bucketlist_item_schema.dump(existing_bucketlist_item).data)
 
     def get(self, id, item_id):
         """Updates a bucket list item"""
@@ -519,22 +491,22 @@ class BucketlistItemApi(AuthRequiredResource):
 
         # Query the bucket list to find the bucketlist owner
         bucketlist = BucketlistModel.query.filter_by(id=id,
-            created_by=current_user).first()
+                                                     created_by=current_user).first()
 
         # if not found
         if not bucketlist:
             return error_response(status=404, error="Not found",
-                message="The bucketlist with id {} does not exist!".format(id))
+                                  message="The bucketlist with id {} does not exist!".format(id))
 
         # check if the bucketlist item is in the bucketlist
         existing_bucketlist_item = BucketListItem.query.filter_by(id=item_id,
-        bucketlist_id=id).first()
+                                                                  bucketlist_id=id).first()
 
         # if it does not
         if not existing_bucketlist_item:
             return error_response(status=404, error="Not found",
-                message="The bucketlist item with id {} does " \
-                    "not exist!".format(item_id))
+                                  message="The bucketlist item with id {} does "
+                                  "not exist!".format(item_id))
 
         return get_bucketlist_item_schema.dump(existing_bucketlist_item).data
 
@@ -546,23 +518,23 @@ class BucketlistItemApi(AuthRequiredResource):
 
         # Query the bucket list to find the bucketlist owner
         bucketlist = BucketlistModel.query.filter_by(id=id,
-            created_by=current_user).first()
-    
+                                                     created_by=current_user).first()
+
         # if not found
         if not bucketlist:
             return error_response(status=404, error="Not found",
-                message="The bucketlist with id {} does not exist!".format(id))
+                                  message="The bucketlist with id {} does not exist!".format(id))
 
         # check if the bucketlist item is in the bucketlist
         existing_bucketlist_item = BucketListItem.query.filter_by(id=item_id,
-        bucketlist_id=id).first()
+                                                                  bucketlist_id=id).first()
 
         # if it does not
         if not existing_bucketlist_item:
             return error_response(status=404, error="Not found",
-                message="The bucketlist item with id {} does " \
-                    "not exist!".format(item_id))
+                                  message="The bucketlist item with id {} does "
+                                  "not exist!".format(item_id))
 
         existing_bucketlist_item.delete(existing_bucketlist_item)
-        return success_response(status=200, message="The bucketlist item {} " \
-            "has been deleted successfully".format(item_id))
+        return success_response(status=200, message="The bucketlist item {} "
+                                "has been deleted successfully".format(item_id))

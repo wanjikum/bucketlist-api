@@ -26,9 +26,9 @@ class UserRegisterSchema(Schema):
                              required=True,
                              error_messages={'required': 'Enter password'})
     verify_password = fields.String(
-                                    validate=[validate.Length(min=5)],
-                                    required=True,
-                                    error_messages={'required': 'Enter password again'})
+        validate=[validate.Length(min=5)],
+        required=True,
+        error_messages={'required': 'Enter password again'})
 
 
 class UserLoginSchema(Schema):
@@ -36,8 +36,8 @@ class UserLoginSchema(Schema):
     Schema to validate, serialize, and deserialize user login data
     """
     email = fields.Email(validate=[validate.Length(max=50)],
-                          required=True,
-                          error_messages={'required': 'Enter email'})
+                         required=True,
+                         error_messages={'required': 'Enter email'})
     password = fields.String(validate=[validate.Length(min=5)],
                              required=True,
                              error_messages={'required': 'Enter password'})
@@ -48,8 +48,15 @@ class BucketListItemSchema(Schema):
     Schema to validate, serialize, and deserialize buckelist data
     """
     id = fields.Integer(dump_only=True)
-    name = fields.String(required=True, validate=[validate.Length(min=2)],
-                error_messages={'required': 'Enter a bucketlist item name'})
+    name = fields.String(required=True,
+                         validate=[validate.Length(min=2, max=200),
+                                   validate.Regexp(r"[a-zA-Z0-9_\-]*$",
+                                                   error="A bucketlist item "
+                                                   "must not contain special "
+                                                   "characters (except _ "
+                                                   "and -)")],
+                         error_messages={'required': 'Enter a bucketlist item '
+                                         'name'})
     date_created = fields.DateTime(dump_only=True)
     date_modified = fields.DateTime(dump_only=True)
     done = fields.Boolean()
@@ -65,9 +72,14 @@ class BucketlistSchema(Schema):
     Schema to validate, serialize, and deserialize buckelist data
     """
     id = fields.Integer(dump_only=True)
-    name = fields.String(required=True, validate=[validate.Length(min=2)],
-                         error_messages={
-                             'required': 'Enter a bucketlist name'})
+    name = fields.String(required=True,
+                         validate=[validate.Length(min=2, max=200),
+                                   validate.Regexp(r"[a-zA-Z0-9_\-]*$",
+                                                   error="A bucketlist name "
+                                                   "must not contain special "
+                                                   "characters (except _ "
+                                                   "and -)")],
+                         error_messages={'required': 'Enter a bucketlist name'})
     items = fields.Nested(BucketListItemSchema, dump_only=True,
                           many=True)
     date_created = fields.DateTime(dump_only=True)
@@ -78,8 +90,6 @@ class BucketlistSchema(Schema):
     @staticmethod
     def get_url(obj):
         return url_for('bucketlist', id=obj.id, _external=True)
-
-
 
 
 get_user_register_schema = UserRegisterSchema()
