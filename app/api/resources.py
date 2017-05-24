@@ -12,7 +12,8 @@ from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 from app.api.schema import (get_user_register_schema,
                             get_user_login_schema,
                             get_bucketlist_schema,
-                            get_bucketlist_item_schema)
+                            get_bucketlist_item_schema,
+                            get_bucketlists_schema)
 from app.api.responses import error_response, success_response
 from app.models import UserModel, BucketlistModel, BucketListItem
 
@@ -20,11 +21,8 @@ from app.models import UserModel, BucketlistModel, BucketListItem
 auth = HTTPTokenAuth()
 
 
-#  declare the verify_user_password function that receives a name
-# and a password as arguments
-# function uses the @auth.verify_password decorator to make this function
-# become the callback that Flask-HTTPAuth will use to verify the password
-# for a specific user
+#  declare the verify_user_token that verifies token
+# it uses the @auth.verify_token decorator to make this function
 @auth.verify_token
 def verify_user_token(token):
 
@@ -207,7 +205,7 @@ class BucketlistsApi(AuthRequiredResource):
                    _external=True)
 
         # serialize bucketlist objects
-        result = get_bucketlist_schema.dump(paginated_bucketlists.items)
+        result = get_bucketlists_schema.dump(paginated_bucketlists.items)
 
         return jsonify({
         'page': page,
@@ -305,6 +303,8 @@ class BucketlistApi(AuthRequiredResource):
         # Query the bucket list with the id
         bucketlist = BucketlistModel.query.filter_by(id=id,
             created_by=current_user).first()
+
+        print(bucketlist)
 
 
         # There are no bucketlists available
