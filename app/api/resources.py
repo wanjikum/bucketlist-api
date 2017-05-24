@@ -467,7 +467,27 @@ class BucketlistItemApi(AuthRequiredResource):
         """Updates a bucket list item"""
 
         # check if user has permissions
-        bucketlist_item = self.verify_user_and_bucketlist(id, item_id)
+        # Get the current user
+        current_user = g.user.id
+
+        # Query the bucket list to find the bucketlist owner
+        bucketlist = BucketlistModel.query.filter_by(id=id,
+            created_by=current_user).first()
+
+        # if not found
+        if not bucketlist:
+            return error_response(status=404, error="Not found",
+                message="The bucketlist with id {} does not exist!".format(id))
+
+        # check if the bucketlist item is in the bucketlist
+        existing_bucketlist_item = BucketListItem.query.filter_by(id=item_id,
+        bucketlist_id=id).first()
+
+        # if it does not
+        if not existing_bucketlist_item:
+            return error_response(status=404, error="Not found",
+                message="The bucketlist item with id {} does " \
+                    "not exist!".format(id))
         new_bucketlist_item = request.get_json()
 
         # Check if there is any data provided by the user
@@ -482,15 +502,15 @@ class BucketlistItemApi(AuthRequiredResource):
             return error_response(validation_errors=validation_errors)
 
         # Get the name of the new bucketlist item
-        bucketlist_item.name = new_bucketlist_item["name"]
-        bucketlist_item.done = new_bucketlist_item["done"]
+        existing_bucketlist_item.name = new_bucketlist_item["name"]
+        existing_bucketlist_item.done = new_bucketlist_item["done"]
 
         # update it to the db
-        bucketlist_item.update()
+        existing_bucketlist_item.update()
 
         # return a success message
         return success_response(status=200, message="Updated successfully!",
-            modified=get_bucketlist_item_schema.dump(bucketlist_item).data)
+            modified=get_bucketlist_item_schema.dump(existing_bucketlist_item).data)
 
 
     def get(self, id, item_id):
