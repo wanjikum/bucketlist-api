@@ -466,7 +466,6 @@ class BucketlistItemApi(AuthRequiredResource):
     def put(self, id, item_id):
         """Updates a bucket list item"""
 
-        # check if user has permissions
         # Get the current user
         current_user = g.user.id
 
@@ -487,7 +486,7 @@ class BucketlistItemApi(AuthRequiredResource):
         if not existing_bucketlist_item:
             return error_response(status=404, error="Not found",
                 message="The bucketlist item with id {} does " \
-                    "not exist!".format(id))
+                    "not exist!".format(item_id))
         new_bucketlist_item = request.get_json()
 
         # Check if there is any data provided by the user
@@ -515,17 +514,28 @@ class BucketlistItemApi(AuthRequiredResource):
 
     def get(self, id, item_id):
         """Updates a bucket list item"""
+        # Get the current user
+        current_user = g.user.id
 
-        # Check if user has permissions
-        bucketlist_item = self.verify_user_and_bucketlist(id, item_id)
-        # print('\n\n\n\nITEM:'bucketlist_item)
-        return get_bucketlist_item_schema.dump(bucketlist_item).data
+        # Query the bucket list to find the bucketlist owner
+        bucketlist = BucketlistModel.query.filter_by(id=id,
+            created_by=current_user).first()
 
-    def delete(self, id, item_id):
-        """delete a bucket list item"""
+        # if not found
+        if not bucketlist:
+            return error_response(status=404, error="Not found",
+                message="The bucketlist with id {} does not exist!".format(id))
 
-        # Check if the user has permissions
-        bucketlist_item = self.verify_user_and_bucketlist(id, item_id)
-        bucketlist_item.delete(bucketlist_item)
-        return success_response(status=200, message="The bucketlist item {} " \
-            "has been deleted successfully".format(item_id))
+        # check if the bucketlist item is in the bucketlist
+        existing_bucketlist_item = BucketListItem.query.filter_by(id=item_id,
+        bucketlist_id=id).first()
+
+        # if it does not
+        if not existing_bucketlist_item:
+            return error_response(status=404, error="Not found",
+                message="The bucketlist item with id {} does " \
+                    "not exist!".format(item_id))
+
+        return get_bucketlist_item_schema.dump(existing_bucketlist_item).data
+
+    
