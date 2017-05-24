@@ -5,7 +5,7 @@ currentdir = os.path.dirname(os.path.abspath(
     inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
-from flask import request, g, jsonify
+from flask import request, g, url_for, jsonify
 from flask_restful import Resource
 from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 
@@ -146,24 +146,91 @@ class BucketlistsApi(AuthRequiredResource):
 
     def get(self):
         """Lists all the created bucket lists"""
+
+        # obtain pagination arguments from the URL's query string
+        page = request.args.get('page', 1, type=int)
+        max_limit = 100
+        request_limit = request.args.get('limit', 20, type=int)
+        limit = min(request_limit, max_limit)
+        search_term = request.args.get('q', None, type=str)
+
         # Get the current user
         current_user = g.user.id
 
         # Query all the bucketlists available
         # Returns an array of bucketlists
-        bucketlists = BucketlistModel.query.filter_by(created_by=current_user).all()
+        # BucketlistModel.query.filter_by(created_by=current_user).all()
 
-        # if no bucketlists available
-        if not bucketlists:
-            return success_response(message='There are no bucketlists '\
-                                    'available')
+        # if there are is no search term
+        if not search_term:
+            paginated_bucketlists = BucketlistModel.query.filter_by(
+            created_by=current_user).paginate(page, limit, error_out=True)
+            print(paginated_bucketlists)
 
-        # if available
-        # serialize obj to JSON formated str
-        bucketlists = [get_bucketlist_schema.dump(bucketlist).data \
-                       for bucketlist in bucketlists]
+        # search bucketlists if search url argument exists
+        else:
+            paginated_bucketlists = BucketlistModel.query.filter_by(
+                created_by=current_user).filter(BucketlistModel.name.ilike(
+                    '%' + search_term + '%')).paginate(page, limit,
+                                                    error_out=True)
+            print(paginated_bucketlists)
 
-        return bucketlists
+        # return 404 if the user doesn't have bucketlists
+        if not paginated_bucketlists.items:
+            return error_response(error='Not found', status=404,
+                              message='No bucketlists available')
+
+          # obtain prev_url and next_url
+        if paginated_bucketlists.has_prev:
+            previous_url = url_for(request.endpoint,
+                               q=search_term, limit=limit,
+                               page=paginated_bucketlists.prev_num,
+                               _external=True)
+
+        else:
+            previous_url = None
+
+        if paginated_bucketlists.has_next:
+            next_url = url_for(request.endpoint,
+                               q=search_term, limit=limit,
+                               page=paginated_bucketlists.next_num,
+                               _external=True)
+        else:
+            next_url = None
+
+        # obtain first and last urls
+        first_url = url_for(request.endpoint, q=search_term, limit=limit,
+                    page=1, _external=True)
+
+        last_url = url_for(request.endpoint, q=search_term,
+                   limit=limit, page=paginated_bucketlists.pages,
+                   _external=True)
+
+        # serialize bucketlist objects
+        result = get_bucketlist_schema.dump(paginated_bucketlists.items)
+
+        return jsonify({
+        'page': page,
+        'limit': limit,
+        'pages': paginated_bucketlists.pages,
+        'prev_url': previous_url,
+        'next_url': next_url,
+        'first_url': first_url,
+        'last_url': last_url,
+        'total': paginated_bucketlists.total,
+        'bucketlist(s)': result.data})
+
+        # # if no bucketlists available
+        # if not bucketlists:
+        #     return success_response(message='There are no bucketlists '\
+        #                             'available')
+        #
+        # # if available
+        # # serialize obj to JSON formated str
+        # bucketlists = [get_bucketlist_schema.dump(bucketlist).data \
+        #                for bucketlist in bucketlists]
+        #
+        # return bucketlists
 
 
     def post(self):
@@ -431,6 +498,7 @@ class BucketlistItemApi(AuthRequiredResource):
 
         # Check if user has permissions
         bucketlist_item = self.verify_user_and_bucketlist(id, item_id)
+        # print('\n\n\n\nITEM:'bucketlist_item)
         return get_bucketlist_item_schema.dump(bucketlist_item).data
 
     def delete(self, id, item_id):

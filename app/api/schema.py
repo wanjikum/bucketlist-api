@@ -80,4 +80,4 @@ class BucketlistSchema(Schema):
 get_user_register_schema = UserRegisterSchema()
 get_user_login_schema = UserLoginSchema()
 get_bucketlist_item_schema = BucketListItemSchema()
-get_bucketlist_schema = BucketlistSchema()
+get_bucketlist_schema = BucketlistSchema(many=True)
