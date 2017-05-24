@@ -13,7 +13,7 @@ class UserRegisterSchema(Schema):
     """
     first_name = fields.String(
         validate=[validate.Length(min=2, max=12),
-                  validate.Regexp(r"[a-zA-Z0-9_\-]*$", error="First name must"
+                  validate.Regexp(r"[a-zA-Z0-9_\- ]*$", error="First name must"
                                   " not contain special characters (except _ "
                                   "and -)")],
         required=True,
@@ -21,7 +21,7 @@ class UserRegisterSchema(Schema):
 
     last_name = fields.String(
         validate=[validate.Length(min=2, max=12),
-                  validate.Regexp(r"[a-zA-Z0-9_\-]*$", error="Last name must"
+                  validate.Regexp(r"[a-zA-Z0-9_\- ]*$", error="Last name must"
                                   " not contain special characters (except _ "
                                   "and -)")],
         required=True,
@@ -58,7 +58,7 @@ class BucketListItemSchema(Schema):
     id = fields.Integer(dump_only=True)
     name = fields.String(required=True,
                          validate=[validate.Length(min=2, max=200),
-                                   validate.Regexp(r"[a-zA-Z0-9_\-]*$",
+                                   validate.Regexp(r"[a-zA-Z0-9_\- ]*$",
                                                    error="A bucketlist item "
                                                    "must not contain special "
                                                    "characters (except _ "
@@ -83,7 +83,7 @@ class BucketListItemEditSchema(Schema):
     id = fields.Integer(dump_only=True)
     name = fields.String(required=True,
                          validate=[validate.Length(min=2, max=200),
-                                   validate.Regexp(r"[a-zA-Z0-9_\-]*$",
+                                   validate.Regexp(r"[a-zA-Z0-9_\- ]*$",
                                                    error="A bucketlist item "
                                                    "must not contain special "
                                                    "characters (except _ "
@@ -110,7 +110,7 @@ class BucketlistSchema(Schema):
     id = fields.Integer(dump_only=True)
     name = fields.String(required=True,
                          validate=[validate.Length(min=2, max=200),
-                                   validate.Regexp(r"[a-zA-Z0-9_\-]*$",
+                                   validate.Regexp(r"[a-zA-Z0-9_\- ]*$",
                                                    error="A bucketlist name "
                                                    "must not contain special "
                                                    "characters (except _ "
