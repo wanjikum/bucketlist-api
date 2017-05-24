@@ -13,7 +13,8 @@ from app.api.schema import (get_user_register_schema,
                             get_user_login_schema,
                             get_bucketlist_schema,
                             get_bucketlist_item_schema,
-                            get_bucketlists_schema)
+                            get_bucketlists_schema,
+                            get_edit_bucketlist_item_schema)
 from app.api.responses import error_response, success_response
 from app.models import UserModel, BucketlistModel, BucketListItem
 
@@ -218,18 +219,6 @@ class BucketlistsApi(AuthRequiredResource):
             'last_url': last_url,
             'total': paginated_bucketlists.total,
             'bucketlist(s)': result.data})
-
-        # # if no bucketlists available
-        # if not bucketlists:
-        #     return success_response(message='There are no bucketlists '\
-        #                             'available')
-        #
-        # # if available
-        # # serialize obj to JSON formated str
-        # bucketlists = [get_bucketlist_schema.dump(bucketlist).data \
-        #                for bucketlist in bucketlists]
-        #
-        # return bucketlists
 
     def post(self):
         """A function that creates a new bucketlist"""
@@ -465,7 +454,7 @@ class BucketlistItemApi(AuthRequiredResource):
             return error_response(message='No input provided')
 
         # check for validation errors
-        validation_errors = get_bucketlist_item_schema.validate(new_bucketlist_item)
+        validation_errors = get_edit_bucketlist_item_schema.validate(new_bucketlist_item)
 
         # if there are validation errors
         if validation_errors:

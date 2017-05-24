@@ -72,7 +72,35 @@ class BucketListItemSchema(Schema):
 
     @staticmethod
     def get_url(obj):
-        return url_for('bucketlistitem', id=obj.bucketlist_id, item_id=obj.id, _external=True)
+        return url_for('bucketlistitem', id=obj.bucketlist_id, item_id=obj.id,
+                       _external=True)
+
+
+class BucketListItemEditSchema(Schema):
+    """
+    Schema to validate, serialize, and deserialize buckelist data
+    """
+    id = fields.Integer(dump_only=True)
+    name = fields.String(required=True,
+                         validate=[validate.Length(min=2, max=200),
+                                   validate.Regexp(r"[a-zA-Z0-9_\-]*$",
+                                                   error="A bucketlist item "
+                                                   "must not contain special "
+                                                   "characters (except _ "
+                                                   "and -)")],
+                         error_messages={'required': 'Enter a bucketlist item '
+                                         'name'})
+    date_created = fields.DateTime(dump_only=True)
+    date_modified = fields.DateTime(dump_only=True)
+    done = fields.Boolean(
+        required=True, error_messages={'required': 'If Done, Enter True.'
+                                       'If not, Enter False'})
+    url = fields.Method('get_url')
+
+    @staticmethod
+    def get_url(obj):
+        return url_for('bucketlistitem', id=obj.bucketlist_id, item_id=obj.id,
+                       _external=True)
 
 
 class BucketlistSchema(Schema):
@@ -104,4 +132,5 @@ get_user_register_schema = UserRegisterSchema()
 get_user_login_schema = UserLoginSchema()
 get_bucketlist_item_schema = BucketListItemSchema()
 get_bucketlist_schema = BucketlistSchema()
+get_edit_bucketlist_item_schema = BucketListItemEditSchema()
 get_bucketlists_schema = BucketlistSchema(many=True)
