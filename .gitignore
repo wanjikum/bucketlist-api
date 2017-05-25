@@ -7,4 +7,4 @@ venv/
 *.sqlite
 *.pyc
 test_bucketlist_db
-migrations
+#migrations
