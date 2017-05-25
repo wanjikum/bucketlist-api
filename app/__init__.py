@@ -13,11 +13,12 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
-    if config_name is None:
-        config_name == "development"
+
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
+    if config_name is None:
+        config_name = "development"
     # initialize app on the SQLAlchemy instance
     db.init_app(app)
 
