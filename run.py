@@ -1,4 +1,3 @@
-import logging
 import sys
 import os
 
@@ -10,9 +9,6 @@ config_name = "development"
 # config_name = os.getenv('APP_SETTINGS')
 
 app = create_app(config_name)
-
-app.logger.addHandler(logging.StreamHandler(sys.stdout))
-app.logger.setLevel(logging.ERROR)
 
 
 @app.route('/')
