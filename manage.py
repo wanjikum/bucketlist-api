@@ -1,11 +1,11 @@
 import os
-from flask_script import Manager # class for handling a set of commands
+from flask_script import Manager  # class for handling a set of commands
 from flask_migrate import Migrate, MigrateCommand
 from app import create_app
 from app import models
 
 
-app = create_app(config_name='development')
+app = create_app(config_name='production')
 with app.app_context():
     from app.models import db, UserModel, BucketlistModel, BucketListItem
 migrate = Migrate(app, db)
@@ -28,6 +28,7 @@ def drop_db():
     """Deletes database"""
     os.system('dropdb bucketlist_db')
     os.system('dropdb test_bucketlist_db')
+
 
 if __name__ == '__main__':
     manager.run()
