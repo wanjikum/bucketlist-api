@@ -132,7 +132,7 @@ class UserTestCases(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_login_user_with_no_username_but_has_password(self):
-        """ Tests API  """
+        """Tests API if it can login data without username """
 
         # login a user with no username
         response = self.client.post('/api/v1/auth/login',
@@ -141,7 +141,7 @@ class UserTestCases(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_login_user_with_a_username_but_has_no_password(self):
-        """ Tests API  """
+        """ Tests API if it can login a user without a username """
 
         # login a user with no password
         response = self.client.post('/api/v1/auth/login',
@@ -150,7 +150,7 @@ class UserTestCases(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_login_user_with_no_credentials(self):
-        """ Tests API  """
+        """ Tests API can login a user with no credentials"""
 
         # login a user with no credentials
         response = self.client.post('/api/v1/auth/login',
