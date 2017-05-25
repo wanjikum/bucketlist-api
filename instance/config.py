@@ -8,7 +8,7 @@ class Config(object):
     # SECRET = os.getenv('SECRET')
     # SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/bucketlist_db'
     SECRET = os.getenv('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('HEROKU_POSTGRESQL_BLUE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
