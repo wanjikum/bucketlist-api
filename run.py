@@ -1,4 +1,3 @@
-import logging
 import sys
 import os
 
@@ -11,8 +10,6 @@ config_name = "development"
 
 app = create_app(config_name)
 
-app.logger.addHandler(logging.StreamHandler(sys.stdout))
-app.logger.setLevel(logging.ERROR)
 
 if __name__ == '__main__':
     app.run(debug=True)
